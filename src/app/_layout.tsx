@@ -1,5 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
+import { StatusBar } from 'expo-status-bar';
 
 import { ThemeProvider, useTheme } from '@/design-system';
 import { ApiError } from '@/services/api/client';
@@ -18,13 +19,16 @@ const queryClient = new QueryClient({
 });
 
 function ThemedStack() {
-  const { colors } = useTheme();
+  const { colors, mode } = useTheme();
   return (
-    <Stack
-      screenOptions={{
-        contentStyle: { backgroundColor: colors.background },
-      }}
-    />
+    <>
+      <StatusBar style={mode === 'dark' ? 'light' : 'dark'} />
+      <Stack
+        screenOptions={{
+          contentStyle: { backgroundColor: colors.background },
+        }}
+      />
+    </>
   );
 }
 

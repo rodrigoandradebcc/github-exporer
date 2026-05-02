@@ -132,7 +132,15 @@ export function IssuesScreen() {
   if (isLoading) {
     return (
       <>
-        <Stack.Screen options={{ title }} />
+        <Stack.Screen
+          options={{
+            title,
+            headerStyle: { backgroundColor: colors.background },
+            headerTintColor: colors.text,
+            headerBackTitle: '',
+            headerBackButtonDisplayMode: 'minimal',
+          }}
+        />
         <Box flex={1} paddingTop="sm" testID="issues-skeleton">
           {SKELETON_KEYS.map((key) => (
             <Box key={key} paddingHorizontal="md" paddingBottom="sm">
@@ -147,7 +155,15 @@ export function IssuesScreen() {
   if (isError) {
     return (
       <>
-        <Stack.Screen options={{ title }} />
+        <Stack.Screen
+          options={{
+            title,
+            headerStyle: { backgroundColor: colors.background },
+            headerTintColor: colors.text,
+            headerBackTitle: '',
+            headerBackButtonDisplayMode: 'minimal',
+          }}
+        />
         <Box flex={1} align="center" justify="center" padding="xl" testID="issues-error">
           {isRateLimit ? (
             <Box direction="column" align="center" gap="sm">
@@ -182,7 +198,15 @@ export function IssuesScreen() {
   if (issues.length === 0) {
     return (
       <>
-        <Stack.Screen options={{ title }} />
+        <Stack.Screen
+          options={{
+            title,
+            headerStyle: { backgroundColor: colors.background },
+            headerTintColor: colors.text,
+            headerBackTitle: '',
+            headerBackButtonDisplayMode: 'minimal',
+          }}
+        />
         <Box flex={1} align="center" justify="center" padding="xl" testID="issues-empty">
           <Ionicons name="checkmark-circle-outline" size={52} color={colors.border} />
           <Box paddingTop="md">

@@ -95,6 +95,7 @@ export function RepositoryDetailScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
+            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <DetailSkeleton />
@@ -111,6 +112,7 @@ export function RepositoryDetailScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
+            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <Box flex={1} align="center" justify="center" padding="xl" testID="detail-error">
@@ -148,7 +150,14 @@ export function RepositoryDetailScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: `${data.owner.login}/${data.name}` }} />
+      <Stack.Screen
+        options={{
+          title: `${data.owner.login}/${data.name}`,
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.text,
+          headerBackTitle: '',
+        }}
+      />
       <ScrollView testID="repo-detail-scroll">
         <Box padding="md" direction="column" gap="md">
           <Card testID="repo-detail-header">
