@@ -16,7 +16,6 @@ describe('Text', () => {
         Error
       </Text>,
     );
-    // danger color from lightColors
     expect(screen.getByTestId('t').props.style.color).toBe('#FF3B30');
   });
 

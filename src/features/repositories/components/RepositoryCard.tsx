@@ -50,7 +50,6 @@ export function RepositoryCard({
       translateY.value = withTiming(0, { duration: ENTER_DURATION_MS });
     }, delay);
     return () => clearTimeout(id);
-    // Shared values and mount-time props intentionally excluded — runs once on mount only.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
