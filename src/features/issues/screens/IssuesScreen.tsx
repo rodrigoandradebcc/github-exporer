@@ -1,5 +1,5 @@
 import { Stack, useLocalSearchParams } from 'expo-router';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
 
 import { Box, useTheme } from '@/design-system';
@@ -29,7 +29,10 @@ export function IssuesScreen() {
   } = useRepositoryIssues(owner, repo);
 
   const isRateLimit = error instanceof ApiError && error.isRateLimit;
-  const issues = data?.pages.flatMap((page) => page).filter((i) => !i.pull_request) ?? [];
+  const issues = useMemo(
+    () => data?.pages.flatMap((page) => page).filter((i) => !i.pull_request) ?? [],
+    [data],
+  );
 
   const handleEndReached = useCallback(() => {
     if (hasNextPage && !isFetchingNextPage) void fetchNextPage();
@@ -44,11 +47,15 @@ export function IssuesScreen() {
     [],
   );
 
-  const ListFooter = isFetchingNextPage ? (
-    <Box paddingVertical="md" align="center">
-      <ActivityIndicator color={colors.primary} />
-    </Box>
-  ) : null;
+  const ListFooter = useMemo(
+    () =>
+      isFetchingNextPage ? (
+        <Box paddingVertical="md" align="center">
+          <ActivityIndicator color={colors.primary} />
+        </Box>
+      ) : null,
+    [isFetchingNextPage, colors.primary],
+  );
 
   const title = `Issues · ${repo}`;
   const headerOptions = getGithubStackScreenOptions({ title, colors });

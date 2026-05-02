@@ -4,17 +4,13 @@ import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated'
 
 import { Avatar, Box, Button, Card, Heading, Text, useTheme } from '@/design-system';
 import type { RepositoryDetail } from '@/services/api/types';
+import { formatCount } from '@/utils/formatCount';
 
 import { RepositoryStatItem } from './RepositoryStatItem';
 
 interface RepositoryDetailContentProps {
   repository: RepositoryDetail;
   onViewIssues: () => void;
-}
-
-function formatCount(n: number): string {
-  if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
-  return String(n);
 }
 
 export function RepositoryDetailContent({

@@ -11,6 +11,7 @@ import Animated, {
 
 import { Avatar, Badge, Box, Card, Heading, Text, useTheme } from '@/design-system';
 import type { Repository } from '@/services/api/types';
+import { formatCount } from '@/utils/formatCount';
 
 interface RepositoryCardProps {
   repo: Repository;
@@ -19,10 +20,7 @@ interface RepositoryCardProps {
   index?: number;
 }
 
-function formatStars(count: number): string {
-  if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
-  return `${count}`;
-}
+const PRESS_SPRING = { stiffness: 400, damping: 30 };
 
 export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryCardProps) {
   const { colors } = useTheme();
@@ -34,11 +32,11 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
   }));
 
   const handlePressIn = () => {
-    scale.value = withSpring(0.97, { stiffness: 400, damping: 30 });
+    scale.value = withSpring(0.97, PRESS_SPRING);
   };
 
   const handlePressOut = () => {
-    scale.value = withSpring(1, { stiffness: 400, damping: 30 });
+    scale.value = withSpring(1, PRESS_SPRING);
   };
 
   const entering = reducedMotion
@@ -59,7 +57,6 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
       <Animated.View style={animatedStyle} entering={entering}>
         <Card padding="lg">
           <Box direction="column" gap="xs">
-            {/* Top row: avatar + owner on left, star count on right */}
             <Box direction="row" align="center" justify="space-between">
               <Box direction="row" align="center" gap="xs">
                 <Avatar uri={repo.owner.avatar_url} fallback={repo.owner.login} size="sm" />
@@ -70,22 +67,19 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
               <Box direction="row" align="center" gap="xs">
                 <Ionicons name="star" size={14} color={colors.warning} />
                 <Text size="sm" weight="medium">
-                  {formatStars(repo.stargazers_count)}
+                  {formatCount(repo.stargazers_count)}
                 </Text>
               </Box>
             </Box>
 
-            {/* Repo name as hero */}
             <Heading level={3}>{repo.name}</Heading>
 
-            {/* Description */}
             {repo.description !== null && (
               <Text tone="muted" size="sm" numberOfLines={2}>
                 {repo.description}
               </Text>
             )}
 
-            {/* Language badge */}
             {repo.language !== null && (
               <Box direction="row">
                 <Badge tone="info" size="sm">

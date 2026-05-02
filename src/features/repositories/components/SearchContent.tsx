@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useCallback } from 'react';
 import { ActivityIndicator, FlatList, Platform, View } from 'react-native';
 
-import { Box, useTheme } from '@/design-system';
+import { Box, Input, useTheme } from '@/design-system';
 import { GithubApiErrorState } from '@/features/github/components/GithubApiErrorState';
 import type { Repository } from '@/services/api/types';
 
@@ -10,7 +11,7 @@ import { SearchEmptyPrompt } from './SearchEmptyPrompt';
 import { SearchEmptyResults } from './SearchEmptyResults';
 import { SearchSkeletonList } from './SearchSkeletonList';
 
-interface SearchContentProps {
+interface SearchResult {
   repos: Repository[];
   query: string;
   hasQuery: boolean;
@@ -19,8 +20,13 @@ interface SearchContentProps {
   isRateLimit: boolean;
   isFetchingNextPage: boolean;
   isRefetching: boolean;
-  headerHeight: number;
-  tabBarHeight: number;
+}
+
+interface SearchContentProps {
+  searchResult: SearchResult;
+  layout: { headerHeight: number; tabBarHeight: number };
+  inputValue: string;
+  onChangeText: (text: string) => void;
   onSelectTopic: (topic: string) => void;
   onRetry: () => void;
   onRefresh: () => void;
@@ -29,16 +35,19 @@ interface SearchContentProps {
 }
 
 export function SearchContent({
-  repos,
-  query,
-  hasQuery,
-  isLoading,
-  isError,
-  isRateLimit,
-  isFetchingNextPage,
-  isRefetching,
-  headerHeight,
-  tabBarHeight,
+  searchResult: {
+    repos,
+    query,
+    hasQuery,
+    isLoading,
+    isError,
+    isRateLimit,
+    isFetchingNextPage,
+    isRefetching,
+  },
+  layout: { headerHeight, tabBarHeight },
+  inputValue,
+  onChangeText,
   onSelectTopic,
   onRetry,
   onRefresh,
@@ -46,6 +55,21 @@ export function SearchContent({
   onRepoPress,
 }: SearchContentProps) {
   const { colors, spacing } = useTheme();
+
+  const searchInput = (
+    <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="xs">
+      <Input
+        placeholder="Buscar repositórios no GitHub…"
+        value={inputValue}
+        onChangeText={onChangeText}
+        autoCapitalize="none"
+        keyboardType="web-search"
+        returnKeyType="search"
+        leftIcon={<Ionicons name="search-outline" size={18} color={colors.muted} />}
+        testID="search-input"
+      />
+    </Box>
+  );
   const insetStyle = { flex: 1, paddingTop: headerHeight, paddingBottom: tabBarHeight };
 
   const renderItem = useCallback(
@@ -71,6 +95,7 @@ export function SearchContent({
   if (isLoading && hasQuery) {
     return (
       <View style={insetStyle}>
+        {searchInput}
         <SearchSkeletonList />
       </View>
     );
@@ -79,6 +104,7 @@ export function SearchContent({
   if (isError) {
     return (
       <View style={insetStyle}>
+        {searchInput}
         <GithubApiErrorState
           isRateLimit={isRateLimit}
           genericMessage="Não foi possível acessar o GitHub. Verifique sua conexão e tente novamente."
@@ -92,6 +118,7 @@ export function SearchContent({
   if (!hasQuery) {
     return (
       <View style={insetStyle}>
+        {searchInput}
         <SearchEmptyPrompt onSelectTopic={onSelectTopic} />
       </View>
     );
@@ -100,6 +127,7 @@ export function SearchContent({
   if (repos.length === 0) {
     return (
       <View style={insetStyle}>
+        {searchInput}
         <SearchEmptyResults query={query} />
       </View>
     );
@@ -114,7 +142,7 @@ export function SearchContent({
       onEndReachedThreshold={0.5}
       onRefresh={onRefresh}
       refreshing={isRefetching}
-      ListHeaderComponent={<Box paddingTop="sm" />}
+      ListHeaderComponent={searchInput}
       ListFooterComponent={listFooter}
       contentContainerStyle={{
         paddingTop: headerHeight,

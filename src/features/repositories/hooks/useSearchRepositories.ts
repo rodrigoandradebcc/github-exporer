@@ -3,6 +3,8 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { PER_PAGE, searchRepositories } from '@/services/api/github';
 import { queryKeys } from '@/services/queryKeys';
 
+const FIVE_MINUTES_MS = 5 * 60 * 1000;
+
 export function useSearchRepositories(query: string) {
   return useInfiniteQuery({
     queryKey: queryKeys.repositories.search(query),
@@ -14,6 +16,6 @@ export function useSearchRepositories(query: string) {
       return allPages.length + 1;
     },
     enabled: query.trim().length > 0,
-    staleTime: 5 * 60 * 1000,
+    staleTime: FIVE_MINUTES_MS,
   });
 }

@@ -1,10 +1,9 @@
-import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
-import React, { useCallback, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Box, GlassView, Heading, Input, useTheme } from '@/design-system';
+import { Box, GlassView, Heading, useTheme } from '@/design-system';
 import { useSearchRepositories } from '@/features/repositories/hooks/useSearchRepositories';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ApiError } from '@/services/api/client';
@@ -34,7 +33,7 @@ export function SearchScreen() {
     isRefetching,
   } = useSearchRepositories(debouncedQuery);
 
-  const repos: Repository[] = data?.pages.flatMap((page) => page.items) ?? [];
+  const repos = useMemo(() => data?.pages.flatMap((page) => page.items) ?? [], [data]);
   const hasQuery = debouncedQuery.trim().length > 0;
   const isRateLimit = error instanceof ApiError && error.isRateLimit;
 
@@ -51,21 +50,44 @@ export function SearchScreen() {
     [router],
   );
 
+  const handleDesignPress = useCallback(() => {
+    router.push('/showcase');
+  }, [router]);
+
+  const searchResult = useMemo(
+    () => ({
+      repos,
+      query: debouncedQuery,
+      hasQuery,
+      isLoading,
+      isError,
+      isRateLimit,
+      isFetchingNextPage,
+      isRefetching,
+    }),
+    [
+      repos,
+      debouncedQuery,
+      hasQuery,
+      isLoading,
+      isError,
+      isRateLimit,
+      isFetchingNextPage,
+      isRefetching,
+    ],
+  );
+
+  const layout = useMemo(() => ({ headerHeight, tabBarHeight }), [headerHeight, tabBarHeight]);
+
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen options={{ headerShown: false }} />
 
       <SearchContent
-        repos={repos}
-        query={debouncedQuery}
-        hasQuery={hasQuery}
-        isLoading={isLoading}
-        isError={isError}
-        isRateLimit={isRateLimit}
-        isFetchingNextPage={isFetchingNextPage}
-        isRefetching={isRefetching}
-        headerHeight={headerHeight}
-        tabBarHeight={tabBarHeight}
+        searchResult={searchResult}
+        layout={layout}
+        inputValue={inputValue}
+        onChangeText={setInputValue}
         onSelectTopic={setInputValue}
         onRetry={refetch}
         onRefresh={refetch}
@@ -77,20 +99,8 @@ export function SearchScreen() {
         style={[styles.header, { paddingTop: insets.top }]}
         onLayout={(e) => setHeaderHeight(e.nativeEvent.layout.height)}
       >
-        <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="xs">
+        <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="sm">
           <Heading level={2}>GitHub Explorer</Heading>
-        </Box>
-        <Box paddingHorizontal="md" paddingBottom="xs">
-          <Input
-            placeholder="Buscar repositórios no GitHub…"
-            value={inputValue}
-            onChangeText={setInputValue}
-            autoCapitalize="none"
-            keyboardType="web-search"
-            returnKeyType="search"
-            leftIcon={<Ionicons name="search-outline" size={18} color={colors.muted} />}
-            testID="search-input"
-          />
         </Box>
       </GlassView>
 
