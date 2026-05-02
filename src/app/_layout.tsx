@@ -1,6 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
+import { Platform } from 'react-native';
 
 import { ThemeProvider, useTheme } from '@/design-system';
 import { ApiError } from '@/services/api/client';
@@ -26,8 +27,10 @@ function ThemedStack() {
       <Stack
         screenOptions={{
           contentStyle: { backgroundColor: colors.background },
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.text,
           headerBackTitle: '',
-          headerBackButtonDisplayMode: 'minimal',
+          ...(Platform.OS === 'ios' ? { headerBackButtonDisplayMode: 'minimal' } : {}),
         }}
       />
     </>

@@ -24,25 +24,26 @@ function formatStars(count: number): string {
   return `${count}`;
 }
 
-export function RepositoryCard({ repo, onPress, testID }: RepositoryCardProps) {
+export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryCardProps) {
   const { colors } = useTheme();
-  const scale = useRef(new Animated.Value(1)).current;
+  const reducedMotion = useReducedMotion();
+  const scale = useSharedValue(1);
 
-  const handlePressIn = () =>
-    Animated.spring(scale, {
-      toValue: 0.97,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 0,
-    }).start();
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
 
-  const handlePressOut = () =>
-    Animated.spring(scale, {
-      toValue: 1,
-      useNativeDriver: true,
-      speed: 50,
-      bounciness: 0,
-    }).start();
+  const handlePressIn = () => {
+    scale.value = withSpring(0.97, { stiffness: 400, damping: 30 });
+  };
+
+  const handlePressOut = () => {
+    scale.value = withSpring(1, { stiffness: 400, damping: 30 });
+  };
+
+  const entering = reducedMotion
+    ? undefined
+    : FadeInDown.delay(index * 50).duration(300);
 
   const label = `Repositório ${repo.owner.login}/${repo.name}${repo.description ? `: ${repo.description}` : ''}`;
 
@@ -55,7 +56,7 @@ export function RepositoryCard({ repo, onPress, testID }: RepositoryCardProps) {
       onPressOut={handlePressOut}
       testID={testID}
     >
-      <Animated.View style={{ transform: [{ scale }] }}>
+      <Animated.View style={animatedStyle} entering={entering}>
         <Card padding="lg">
           <Box direction="column" gap="xs">
             {/* Top row: avatar + owner on left, star count on right */}

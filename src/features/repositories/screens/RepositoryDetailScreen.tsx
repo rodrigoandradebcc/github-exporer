@@ -2,6 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView, View } from 'react-native';
+import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 
 import { Avatar, Box, Button, Card, Heading, Skeleton, Text, useTheme } from '@/design-system';
 import { useRepository } from '@/features/repositories/hooks/useRepository';
@@ -82,6 +83,7 @@ export function RepositoryDetailScreen() {
   const { owner, repo } = useLocalSearchParams<{ owner: string; repo: string }>();
   const router = useRouter();
   const { colors } = useTheme();
+  const reducedMotion = useReducedMotion();
   const { data, isLoading, isError, error, refetch } = useRepository(owner, repo);
 
   const isRateLimit = error instanceof ApiError && error.isRateLimit;
@@ -95,7 +97,6 @@ export function RepositoryDetailScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
-            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <DetailSkeleton />
@@ -112,7 +113,6 @@ export function RepositoryDetailScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
-            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <Box flex={1} align="center" justify="center" padding="xl" testID="detail-error">
@@ -160,59 +160,65 @@ export function RepositoryDetailScreen() {
       />
       <ScrollView testID="repo-detail-scroll">
         <Box padding="md" direction="column" gap="md">
-          <Card testID="repo-detail-header">
-            <Box direction="column" gap="sm">
-              <Box direction="row" align="center" gap="md">
-                <Avatar uri={data.owner.avatar_url} fallback={data.owner.login} size="lg" />
-                <Box direction="column" gap="xs" flex={1}>
-                  <Text variant="label" size="xs" tone="muted">
-                    {data.owner.login}
-                  </Text>
-                  <Heading level={1}>{data.name}</Heading>
+          <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(300)}>
+            <Card testID="repo-detail-header">
+              <Box direction="column" gap="sm">
+                <Box direction="row" align="center" gap="md">
+                  <Avatar uri={data.owner.avatar_url} fallback={data.owner.login} size="lg" />
+                  <Box direction="column" gap="xs" flex={1}>
+                    <Text variant="label" size="xs" tone="muted">
+                      {data.owner.login}
+                    </Text>
+                    <Heading level={1}>{data.name}</Heading>
+                  </Box>
                 </Box>
+                {data.description !== null && <Text tone="muted">{data.description}</Text>}
               </Box>
-              {data.description !== null && <Text tone="muted">{data.description}</Text>}
-            </Box>
-          </Card>
+            </Card>
+          </Animated.View>
 
-          <Card testID="repo-detail-stats">
-            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
-              <StatItem
-                icon="star-outline"
-                value={formatCount(data.stargazers_count)}
-                label="Stars"
-                iconColor={colors.warning}
-              />
-              <StatItem
-                icon="git-branch-outline"
-                value={formatCount(data.forks_count)}
-                label="Forks"
-                iconColor={colors.success}
-              />
-              <StatItem
-                icon="eye-outline"
-                value={formatCount(data.watchers_count)}
-                label="Watchers"
-                iconColor={colors.info}
-              />
-              {data.language !== null && (
+          <Animated.View entering={reducedMotion ? undefined : FadeInDown.delay(100).duration(300)}>
+            <Card testID="repo-detail-stats">
+              <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
                 <StatItem
-                  icon="code-slash-outline"
-                  value={data.language}
-                  label="Linguagem"
-                  iconColor={colors.primary}
+                  icon="star-outline"
+                  value={formatCount(data.stargazers_count)}
+                  label="Stars"
+                  iconColor={colors.warning}
                 />
-              )}
-            </View>
-          </Card>
+                <StatItem
+                  icon="git-branch-outline"
+                  value={formatCount(data.forks_count)}
+                  label="Forks"
+                  iconColor={colors.success}
+                />
+                <StatItem
+                  icon="eye-outline"
+                  value={formatCount(data.watchers_count)}
+                  label="Watchers"
+                  iconColor={colors.info}
+                />
+                {data.language !== null && (
+                  <StatItem
+                    icon="code-slash-outline"
+                    value={data.language}
+                    label="Linguagem"
+                    iconColor={colors.primary}
+                  />
+                )}
+              </View>
+            </Card>
+          </Animated.View>
 
-          <Button
-            testID="view-issues-button"
-            size="lg"
-            onPress={() => router.push(`/repository/${owner}/${repo}/issues`)}
-          >
-            Ver Issues
-          </Button>
+          <Animated.View entering={reducedMotion ? undefined : FadeInDown.delay(200).duration(300)}>
+            <Button
+              testID="view-issues-button"
+              size="lg"
+              onPress={() => router.push(`/repository/${owner}/${repo}/issues`)}
+            >
+              Ver Issues
+            </Button>
+          </Animated.View>
         </Box>
       </ScrollView>
     </>

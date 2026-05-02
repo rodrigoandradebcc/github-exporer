@@ -4,6 +4,7 @@ import { ptBR } from 'date-fns/locale';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useCallback } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
+import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 
 import { Avatar, Badge, Box, Button, Card, Skeleton, Text, useTheme } from '@/design-system';
 import type { BadgeTone } from '@/design-system';
@@ -45,47 +46,48 @@ function IssueSkeleton() {
   );
 }
 
-function IssueCard({ issue }: { issue: Issue }) {
+function IssueCard({ issue, index = 0 }: { issue: Issue; index?: number }) {
   const { colors } = useTheme();
+  const reducedMotion = useReducedMotion();
+  const entering = reducedMotion ? undefined : FadeInDown.delay(index * 50).duration(300);
   return (
-    <Card testID={`issue-card-${issue.id}`}>
-      <Box direction="column" gap="sm">
-        {/* Title with status dot */}
-        <Box direction="row" align="flex-start" gap="xs">
-          <Ionicons name="ellipse" size={10} color={colors.success} style={{ marginTop: 4 }} />
-          <Box flex={1}>
-            <Text weight="medium" numberOfLines={2}>
-              {issue.title}
+    <Animated.View entering={entering}>
+      <Card testID={`issue-card-${issue.id}`}>
+        <Box direction="column" gap="sm">
+          <Box direction="row" align="flex-start" gap="xs">
+            <Ionicons name="ellipse" size={10} color={colors.success} style={{ marginTop: 4 }} />
+            <Box flex={1}>
+              <Text weight="medium" numberOfLines={2}>
+                {issue.title}
+              </Text>
+            </Box>
+          </Box>
+
+          {issue.labels.length > 0 && (
+            <Box direction="row" gap="xs" wrap>
+              {issue.labels.map((label) => (
+                <Badge key={label.id} tone={labelColorToTone(label.color)} size="sm">
+                  {label.name}
+                </Badge>
+              ))}
+            </Box>
+          )}
+
+          <Box direction="row" align="center" justify="space-between">
+            <Box direction="row" align="center" gap="xs" flex={1}>
+              <Avatar uri={issue.user.avatar_url} fallback={issue.user.login} size="sm" />
+              <Text size="xs" tone="muted" numberOfLines={1}>
+                {issue.user.login} ·{' '}
+                {formatDistanceToNow(new Date(issue.created_at), { addSuffix: true, locale: ptBR })}
+              </Text>
+            </Box>
+            <Text size="xs" tone="muted" weight="medium">
+              #{issue.number}
             </Text>
           </Box>
         </Box>
-
-        {/* Labels */}
-        {issue.labels.length > 0 && (
-          <Box direction="row" gap="xs" wrap>
-            {issue.labels.map((label) => (
-              <Badge key={label.id} tone={labelColorToTone(label.color)} size="sm">
-                {label.name}
-              </Badge>
-            ))}
-          </Box>
-        )}
-
-        {/* Footer: author/date on left, issue number on right */}
-        <Box direction="row" align="center" justify="space-between">
-          <Box direction="row" align="center" gap="xs" flex={1}>
-            <Avatar uri={issue.user.avatar_url} fallback={issue.user.login} size="sm" />
-            <Text size="xs" tone="muted" numberOfLines={1}>
-              {issue.user.login} ·{' '}
-              {formatDistanceToNow(new Date(issue.created_at), { addSuffix: true, locale: ptBR })}
-            </Text>
-          </Box>
-          <Text size="xs" tone="muted" weight="medium">
-            #{issue.number}
-          </Text>
-        </Box>
-      </Box>
-    </Card>
+      </Card>
+    </Animated.View>
   );
 }
 
@@ -113,9 +115,9 @@ export function IssuesScreen() {
   }, [hasNextPage, isFetchingNextPage, fetchNextPage]);
 
   const renderItem = useCallback(
-    ({ item }: { item: Issue }) => (
+    ({ item, index }: { item: Issue; index: number }) => (
       <Box paddingHorizontal="md" paddingBottom="sm">
-        <IssueCard issue={item} />
+        <IssueCard issue={item} index={index} />
       </Box>
     ),
     [],
@@ -138,7 +140,6 @@ export function IssuesScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
-            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <Box flex={1} paddingTop="sm" testID="issues-skeleton">
@@ -161,7 +162,6 @@ export function IssuesScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
-            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <Box flex={1} align="center" justify="center" padding="xl" testID="issues-error">
@@ -204,7 +204,6 @@ export function IssuesScreen() {
             headerStyle: { backgroundColor: colors.background },
             headerTintColor: colors.text,
             headerBackTitle: '',
-            headerBackButtonDisplayMode: 'minimal',
           }}
         />
         <Box flex={1} align="center" justify="center" padding="xl" testID="issues-empty">

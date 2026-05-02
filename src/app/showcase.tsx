@@ -64,7 +64,6 @@ export default function ShowcaseScreen() {
           headerStyle: { backgroundColor: colors.background },
           headerTintColor: colors.text,
           headerBackTitle: '',
-          headerBackButtonDisplayMode: 'minimal',
         }}
       />
       <ScrollView>
