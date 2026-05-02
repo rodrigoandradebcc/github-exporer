@@ -26,6 +26,8 @@ function ThemedStack() {
       <Stack
         screenOptions={{
           contentStyle: { backgroundColor: colors.background },
+          headerBackTitle: '',
+          headerBackButtonDisplayMode: 'minimal',
         }}
       />
     </>

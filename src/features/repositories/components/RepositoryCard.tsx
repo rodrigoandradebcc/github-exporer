@@ -1,6 +1,13 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useRef } from 'react';
-import { Animated, Pressable } from 'react-native';
+import React from 'react';
+import { Pressable } from 'react-native';
+import Animated, {
+  FadeInDown,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 
 import { Avatar, Badge, Box, Card, Heading, Text, useTheme } from '@/design-system';
 import type { Repository } from '@/services/api/types';
@@ -9,6 +16,7 @@ interface RepositoryCardProps {
   repo: Repository;
   onPress: () => void;
   testID?: string;
+  index?: number;
 }
 
 function formatStars(count: number): string {
