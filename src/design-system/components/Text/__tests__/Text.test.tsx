@@ -26,7 +26,7 @@ describe('Text', () => {
         Muted
       </Text>,
     );
-    expect(screen.getByTestId('t').props.style.color).toBe('#8E8E93');
+    expect(screen.getByTestId('t').props.style.color).toBe('#636C76');
   });
 
   it('applies bold weight', () => {

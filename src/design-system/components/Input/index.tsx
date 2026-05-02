@@ -11,6 +11,7 @@ export interface InputProps {
   helperText?: string;
   placeholder?: string;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
+  keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'url' | 'web-search';
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   secureTextEntry?: boolean;
   disabled?: boolean;
@@ -25,6 +26,7 @@ export function Input({
   helperText,
   placeholder,
   autoCapitalize,
+  keyboardType,
   returnKeyType,
   secureTextEntry,
   disabled = false,
@@ -47,6 +49,7 @@ export function Input({
         placeholder={placeholder}
         placeholderTextColor={colors.muted}
         autoCapitalize={autoCapitalize}
+        keyboardType={keyboardType}
         returnKeyType={returnKeyType}
         secureTextEntry={secureTextEntry}
         editable={!disabled}
@@ -61,6 +64,7 @@ export function Input({
           borderRadius: radius.md,
           paddingVertical: spacing.sm,
           paddingHorizontal: spacing.md,
+          minHeight: 44,
         }}
       />
       {error !== undefined && (

@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Platform } from 'react-native';
@@ -27,14 +28,18 @@ function SkeletonList() {
 }
 
 function EmptyPrompt() {
+  const { colors } = useTheme();
   return (
     <Box flex={1} align="center" justify="center" padding="xl" testID="empty-prompt">
-      <Text tone="muted" size="lg">
-        Search GitHub repositories
-      </Text>
+      <Ionicons name="search-outline" size={52} color={colors.border} />
+      <Box paddingTop="md">
+        <Text tone="muted" size="lg" weight="medium">
+          Buscar repositórios
+        </Text>
+      </Box>
       <Box paddingTop="xs">
         <Text tone="muted" size="sm">
-          Type a repository name or topic to get started
+          Digite um nome ou tópico para começar
         </Text>
       </Box>
     </Box>
@@ -42,19 +47,34 @@ function EmptyPrompt() {
 }
 
 function EmptyResults({ query }: { query: string }) {
+  const { colors } = useTheme();
   return (
     <Box flex={1} align="center" justify="center" padding="xl" testID="empty-results">
-      <Text tone="muted">No repositories found for {query}</Text>
+      <Ionicons name="albums-outline" size={48} color={colors.border} />
+      <Box paddingTop="md">
+        <Text tone="muted" weight="medium">
+          Nenhum resultado para "{query}"
+        </Text>
+      </Box>
+      <Box paddingTop="xs">
+        <Text tone="muted" size="sm">
+          Tente outros termos de busca
+        </Text>
+      </Box>
     </Box>
   );
 }
 
 function RateLimitError() {
+  const { colors } = useTheme();
   return (
     <Box flex={1} align="center" justify="center" padding="xl" testID="rate-limit-error">
-      <Text weight="bold" tone="danger">
-        GitHub rate limit reached
-      </Text>
+      <Ionicons name="warning-outline" size={48} color={colors.warning} />
+      <Box paddingTop="md">
+        <Text weight="bold" tone="danger">
+          GitHub rate limit reached
+        </Text>
+      </Box>
       <Box paddingTop="sm">
         <Text tone="muted" size="sm">
           You have exceeded the unauthenticated API limit. Add your EXPO_PUBLIC_GITHUB_TOKEN to .env
@@ -66,11 +86,15 @@ function RateLimitError() {
 }
 
 function GenericError({ onRetry }: { onRetry: () => void }) {
+  const { colors } = useTheme();
   return (
     <Box flex={1} align="center" justify="center" padding="xl" testID="generic-error">
-      <Text tone="danger" weight="bold">
-        Something went wrong
-      </Text>
+      <Ionicons name="cloud-offline-outline" size={48} color={colors.muted} />
+      <Box paddingTop="md">
+        <Text tone="danger" weight="bold">
+          Something went wrong
+        </Text>
+      </Box>
       <Box paddingTop="sm">
         <Text tone="muted" size="sm">
           Could not reach GitHub. Check your connection and try again.
@@ -179,10 +203,11 @@ export function SearchScreen() {
       />
       <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="xs">
         <Input
-          placeholder="Search GitHub repositories…"
+          placeholder="Buscar repositórios no GitHub…"
           value={inputValue}
           onChangeText={setInputValue}
           autoCapitalize="none"
+          keyboardType="web-search"
           returnKeyType="search"
           testID="search-input"
         />

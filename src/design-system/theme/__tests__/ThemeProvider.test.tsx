@@ -55,7 +55,7 @@ describe('ThemeProvider', () => {
     });
 
     expect(screen.getByTestId('mode').props.children).toBe('dark');
-    expect(screen.getByTestId('bg-color').props.children).toBe('#000000');
+    expect(screen.getByTestId('bg-color').props.children).toBe('#0D1117');
     expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('@github_explorer/theme_mode', 'dark');
   });
 

@@ -13,7 +13,7 @@ export interface CardProps {
 }
 
 export function Card({ padding = 'md', children, testID }: CardProps) {
-  const { colors, spacing, radius } = useTheme();
+  const { colors, spacing, radius, mode } = useTheme();
 
   return (
     <View
@@ -24,6 +24,11 @@ export function Card({ padding = 'md', children, testID }: CardProps) {
         borderColor: colors.border,
         borderRadius: radius.md,
         padding: spacing[padding],
+        shadowColor: '#000000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: mode === 'light' ? 0.06 : 0,
+        shadowRadius: 3,
+        elevation: mode === 'light' ? 2 : 0,
       }}
     >
       {children}

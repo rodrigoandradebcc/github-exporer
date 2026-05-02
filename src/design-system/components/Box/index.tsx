@@ -15,6 +15,7 @@ export interface BoxProps {
     | 'space-between'
     | 'space-around'
     | 'space-evenly';
+  wrap?: boolean;
   gap?: SpacingKey;
   padding?: SpacingKey;
   paddingHorizontal?: SpacingKey;
@@ -32,6 +33,7 @@ export function Box({
   direction,
   align,
   justify,
+  wrap,
   gap,
   padding,
   paddingHorizontal,
@@ -53,6 +55,7 @@ export function Box({
         flexDirection: direction,
         alignItems: align,
         justifyContent: justify,
+        flexWrap: wrap === true ? 'wrap' : undefined,
         gap: gap !== undefined ? spacing[gap] : undefined,
         padding: padding !== undefined ? spacing[padding] : undefined,
         paddingHorizontal: paddingHorizontal !== undefined ? spacing[paddingHorizontal] : undefined,

@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
@@ -113,7 +114,7 @@ export function RepositoryDetailScreen() {
           </Card>
 
           <Card testID="repo-detail-stats">
-            <Box direction="row" gap="sm" align="center">
+            <Box direction="row" gap="sm" align="center" wrap>
               {data.language !== null && <Badge tone="info">{data.language}</Badge>}
               <Badge tone="warning">★ {formatCount(data.stargazers_count)}</Badge>
               <Badge>Forks {formatCount(data.forks_count)}</Badge>
@@ -123,6 +124,7 @@ export function RepositoryDetailScreen() {
 
           <Button
             testID="view-issues-button"
+            leftIcon={<Ionicons name="bug-outline" size={16} color="#FFFFFF" />}
             onPress={() => router.push(`/repository/${owner}/${repo}/issues`)}
           >
             Ver Issues

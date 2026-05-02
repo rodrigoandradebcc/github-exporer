@@ -9,7 +9,8 @@
     "web": "expo start --web",
     "test": "jest --watchAll=false",
     "lint": "eslint .",
-    "format": "prettier --write ."
+    "format": "prettier --write .",
+    "type-check": "tsc --noEmit"
   },
   "jest": {
     "preset": "jest-expo",
@@ -20,7 +21,9 @@
       "node_modules/(?!((jest-)?react-native|@react-native(-community)?)|expo(nent)?|@expo(nent)?/.*|@expo-google-fonts/.*|react-navigation|@react-navigation/.*|@unimodules/.*|unimodules|sentry-expo|native-base|react-native-svg)"
     ],
     "moduleNameMapper": {
-      "^@/(.*)$": "<rootDir>/src/$1"
+      "^@/(.*)$": "<rootDir>/src/$1",
+      "^@expo/vector-icons$": "<rootDir>/__mocks__/@expo/vector-icons.js",
+      "^@expo/vector-icons/(.*)$": "<rootDir>/__mocks__/@expo/vector-icons.js"
     }
   },
   "dependencies": {

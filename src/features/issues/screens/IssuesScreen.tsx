@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import { formatDistanceToNow } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { Stack, useLocalSearchParams } from 'expo-router';
@@ -45,14 +46,20 @@ function IssueSkeleton() {
 }
 
 function IssueCard({ issue }: { issue: Issue }) {
+  const { colors } = useTheme();
   return (
     <Card testID={`issue-card-${issue.id}`}>
       <Box direction="column" gap="sm">
-        <Text weight="medium" numberOfLines={2}>
-          {issue.title}
-        </Text>
+        <Box direction="row" align="flex-start" gap="xs">
+          <Ionicons name="ellipse" size={10} color={colors.success} style={{ marginTop: 4 }} />
+          <Box flex={1}>
+            <Text weight="medium" numberOfLines={2}>
+              {issue.title}
+            </Text>
+          </Box>
+        </Box>
         {issue.labels.length > 0 && (
-          <Box direction="row" gap="xs">
+          <Box direction="row" gap="xs" wrap>
             {issue.labels.map((label) => (
               <Badge key={label.id} tone={labelColorToTone(label.color)} size="sm">
                 {label.name}
@@ -63,12 +70,7 @@ function IssueCard({ issue }: { issue: Issue }) {
         <Box direction="row" align="center" gap="xs">
           <Avatar uri={issue.user.avatar_url} fallback={issue.user.login} size="sm" />
           <Text size="xs" tone="muted">
-            {issue.user.login}
-          </Text>
-          <Text size="xs" tone="muted">
-            ·
-          </Text>
-          <Text size="xs" tone="muted">
+            {issue.user.login} ·{' '}
             {formatDistanceToNow(new Date(issue.created_at), { addSuffix: true, locale: ptBR })}
           </Text>
         </Box>

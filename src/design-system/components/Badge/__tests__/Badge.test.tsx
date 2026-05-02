@@ -14,7 +14,7 @@ describe('Badge', () => {
     renderWithTheme(<Badge testID="badge">Label</Badge>);
     const badge = screen.getByTestId('badge');
     // default uses surface color
-    expect(badge.props.style.backgroundColor).toBe('#F2F2F7');
+    expect(badge.props.style.backgroundColor).toBe('#F6F8FA');
   });
 
   it('renders with success tone', () => {

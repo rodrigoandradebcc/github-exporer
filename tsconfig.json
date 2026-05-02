@@ -7,6 +7,12 @@
     "paths": {
       "@/*": [
         "src/*"
+      ],
+      "@expo/vector-icons": [
+        "node_modules/expo/node_modules/@expo/vector-icons"
+      ],
+      "@expo/vector-icons/*": [
+        "node_modules/expo/node_modules/@expo/vector-icons/*"
       ]
     },
     "types": [
