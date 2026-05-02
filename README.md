@@ -77,7 +77,7 @@ Não é necessário instalar Expo CLI globalmente; todos os comandos usam `npx`.
 
 ```bash
 # 1. Clone o repositório
-git clone https://github.com/rodrigo-andrade-dev/github-explorer.git
+git clone https://github.com/rodrigoandradebcc/github-explorer.git
 cd github-explorer
 
 # 2. Instale as dependências
