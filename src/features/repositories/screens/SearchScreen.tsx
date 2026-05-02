@@ -1,25 +1,21 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Box, GlassView, Heading, Input, useTheme } from '@/design-system';
-import { GithubApiErrorState } from '@/features/github/components/GithubApiErrorState';
 import { useSearchRepositories } from '@/features/repositories/hooks/useSearchRepositories';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ApiError } from '@/services/api/client';
 import type { Repository } from '@/services/api/types';
 
 import { SearchBottomTabBar } from '../components/SearchBottomTabBar';
-import { SearchEmptyPrompt } from '../components/SearchEmptyPrompt';
-import { SearchEmptyResults } from '../components/SearchEmptyResults';
-import { RepositoryCard } from '../components/RepositoryCard';
-import { SearchSkeletonList } from '../components/SearchSkeletonList';
+import { SearchContent } from '../components/SearchContent';
 
 export function SearchScreen() {
   const router = useRouter();
-  const { spacing, colors } = useTheme();
+  const { colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [inputValue, setInputValue] = useState('');
   const debouncedQuery = useDebounce(inputValue, 500);
@@ -55,90 +51,27 @@ export function SearchScreen() {
     [router],
   );
 
-  const renderItem = useCallback(
-    ({ item, index }: { item: Repository; index: number }) => (
-      <Box paddingHorizontal="md" paddingBottom="sm">
-        <RepositoryCard
-          repo={item}
-          onPress={() => handleRepoPress(item)}
-          testID={`repo-card-${item.id}`}
-          index={index}
-        />
-      </Box>
-    ),
-    [handleRepoPress],
-  );
-
-  const ListFooter = isFetchingNextPage ? (
-    <Box paddingVertical="md" align="center">
-      <ActivityIndicator color={colors.primary} />
-    </Box>
-  ) : null;
-
-  const renderContent = () => {
-    const insetStyle = { flex: 1, paddingTop: headerHeight, paddingBottom: tabBarHeight };
-
-    if (isLoading && hasQuery) {
-      return (
-        <View style={insetStyle}>
-          <SearchSkeletonList />
-        </View>
-      );
-    }
-    if (isError) {
-      return (
-        <View style={insetStyle}>
-          <GithubApiErrorState
-            isRateLimit={isRateLimit}
-            genericMessage="Não foi possível acessar o GitHub. Verifique sua conexão e tente novamente."
-            testID={isRateLimit ? 'rate-limit-error' : 'generic-error'}
-            onRetry={refetch}
-          />
-        </View>
-      );
-    }
-    if (!hasQuery) {
-      return (
-        <View style={insetStyle}>
-          <SearchEmptyPrompt onSelectTopic={setInputValue} />
-        </View>
-      );
-    }
-    if (repos.length === 0) {
-      return (
-        <View style={insetStyle}>
-          <SearchEmptyResults query={debouncedQuery} />
-        </View>
-      );
-    }
-
-    return (
-      <FlatList
-        data={repos}
-        keyExtractor={(item) => String(item.id)}
-        renderItem={renderItem}
-        onEndReached={handleEndReached}
-        onEndReachedThreshold={0.5}
-        onRefresh={refetch}
-        refreshing={isRefetching}
-        ListHeaderComponent={<Box paddingTop="sm" />}
-        ListFooterComponent={ListFooter}
-        contentContainerStyle={{
-          paddingTop: headerHeight,
-          paddingBottom: tabBarHeight + spacing.xl,
-        }}
-        scrollIndicatorInsets={{ top: headerHeight, bottom: tabBarHeight }}
-        keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
-        testID="repos-list"
-      />
-    );
-  };
-
   return (
     <View style={{ flex: 1, backgroundColor: colors.background }}>
       <Stack.Screen options={{ headerShown: false }} />
 
-      {renderContent()}
+      <SearchContent
+        repos={repos}
+        query={debouncedQuery}
+        hasQuery={hasQuery}
+        isLoading={isLoading}
+        isError={isError}
+        isRateLimit={isRateLimit}
+        isFetchingNextPage={isFetchingNextPage}
+        isRefetching={isRefetching}
+        headerHeight={headerHeight}
+        tabBarHeight={tabBarHeight}
+        onSelectTopic={setInputValue}
+        onRetry={refetch}
+        onRefresh={refetch}
+        onEndReached={handleEndReached}
+        onRepoPress={handleRepoPress}
+      />
 
       <GlassView
         style={[styles.header, { paddingTop: insets.top }]}
