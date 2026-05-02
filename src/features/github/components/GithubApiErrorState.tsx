@@ -3,16 +3,25 @@ import React from 'react';
 
 import { Box, Button, Text, useTheme } from '@/design-system';
 
-interface RepositoryDetailErrorProps {
+interface GithubApiErrorStateProps {
   isRateLimit: boolean;
-  onRetry: () => void;
+  genericMessage: string;
+  testID: string;
+  onRetry?: () => void;
+  retryTestID?: string;
 }
 
-export function RepositoryDetailError({ isRateLimit, onRetry }: RepositoryDetailErrorProps) {
+export function GithubApiErrorState({
+  isRateLimit,
+  genericMessage,
+  testID,
+  onRetry,
+  retryTestID,
+}: GithubApiErrorStateProps) {
   const { colors } = useTheme();
 
   return (
-    <Box flex={1} align="center" justify="center" padding="xl" testID="detail-error">
+    <Box flex={1} align="center" justify="center" padding="xl" testID={testID}>
       {isRateLimit ? (
         <Box direction="column" align="center" gap="sm">
           <Ionicons name="warning-outline" size={48} color={colors.warning} />
@@ -31,11 +40,13 @@ export function RepositoryDetailError({ isRateLimit, onRetry }: RepositoryDetail
             Algo deu errado
           </Text>
           <Text tone="muted" size="sm">
-            Não foi possível carregar os detalhes do repositório.
+            {genericMessage}
           </Text>
-          <Button variant="outline" onPress={onRetry} testID="detail-retry-button">
-            Tentar novamente
-          </Button>
+          {onRetry !== undefined && (
+            <Button variant="outline" onPress={onRetry} testID={retryTestID}>
+              Tentar novamente
+            </Button>
+          )}
         </Box>
       )}
     </Box>

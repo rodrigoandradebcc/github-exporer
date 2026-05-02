@@ -2,11 +2,12 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 
 import { useTheme } from '@/design-system';
+import { GithubApiErrorState } from '@/features/github/components/GithubApiErrorState';
+import { getGithubStackScreenOptions } from '@/features/github/navigation/getGithubStackScreenOptions';
 import { useRepository } from '@/features/repositories/hooks/useRepository';
 import { ApiError } from '@/services/api/client';
 
 import { RepositoryDetailContent } from '../components/RepositoryDetailContent';
-import { RepositoryDetailError } from '../components/RepositoryDetailError';
 import { RepositoryDetailSkeleton } from '../components/RepositoryDetailSkeleton';
 
 export function RepositoryDetailScreen() {
@@ -16,18 +17,13 @@ export function RepositoryDetailScreen() {
   const { data, isLoading, isError, error, refetch } = useRepository(owner, repo);
 
   const isRateLimit = error instanceof ApiError && error.isRateLimit;
+  const title = typeof repo === 'string' ? repo : undefined;
+  const headerOptions = getGithubStackScreenOptions({ title, colors });
 
   if (isLoading) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title: repo,
-            headerStyle: { backgroundColor: colors.background },
-            headerTintColor: colors.text,
-            headerBackTitle: '',
-          }}
-        />
+        <Stack.Screen options={headerOptions} />
         <RepositoryDetailSkeleton />
       </>
     );
@@ -36,15 +32,14 @@ export function RepositoryDetailScreen() {
   if (isError) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title: repo,
-            headerStyle: { backgroundColor: colors.background },
-            headerTintColor: colors.text,
-            headerBackTitle: '',
-          }}
+        <Stack.Screen options={headerOptions} />
+        <GithubApiErrorState
+          isRateLimit={isRateLimit}
+          genericMessage="Não foi possível carregar os detalhes do repositório."
+          testID="detail-error"
+          retryTestID="detail-retry-button"
+          onRetry={refetch}
         />
-        <RepositoryDetailError isRateLimit={isRateLimit} onRetry={refetch} />
       </>
     );
   }
@@ -54,12 +49,10 @@ export function RepositoryDetailScreen() {
   return (
     <>
       <Stack.Screen
-        options={{
+        options={getGithubStackScreenOptions({
           title: `${data.owner.login}/${data.name}`,
-          headerStyle: { backgroundColor: colors.background },
-          headerTintColor: colors.text,
-          headerBackTitle: '',
-        }}
+          colors,
+        })}
       />
       <RepositoryDetailContent
         repository={data}

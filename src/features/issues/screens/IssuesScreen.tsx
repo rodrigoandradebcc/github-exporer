@@ -1,95 +1,16 @@
-import { Ionicons } from '@expo/vector-icons';
-import { formatDistanceToNow } from 'date-fns';
-import { ptBR } from 'date-fns/locale';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import React, { useCallback } from 'react';
 import { ActivityIndicator, FlatList } from 'react-native';
-import Animated, { FadeInDown, useReducedMotion } from 'react-native-reanimated';
 
-import { Avatar, Badge, Box, Button, Card, Skeleton, Text, useTheme } from '@/design-system';
-import type { BadgeTone } from '@/design-system';
+import { Box, useTheme } from '@/design-system';
+import { GithubApiErrorState } from '@/features/github/components/GithubApiErrorState';
+import { getGithubStackScreenOptions } from '@/features/github/navigation/getGithubStackScreenOptions';
+import { IssueCard } from '@/features/issues/components/IssueCard';
+import { IssuesEmptyState } from '@/features/issues/components/IssuesEmptyState';
+import { IssuesSkeletonList } from '@/features/issues/components/IssuesSkeletonList';
 import { useRepositoryIssues } from '@/features/issues/hooks/useRepositoryIssues';
 import { ApiError } from '@/services/api/client';
 import type { Issue } from '@/services/api/types';
-
-function labelColorToTone(hex: string): BadgeTone {
-  const r = parseInt(hex.slice(0, 2), 16);
-  const g = parseInt(hex.slice(2, 4), 16);
-  const b = parseInt(hex.slice(4, 6), 16);
-  if (r > 180 && g < 100 && b < 100) return 'danger';
-  if (g > 160 && r < 140) return 'success';
-  if (r > 180 && g > 120 && b < 80) return 'warning';
-  if (b > 160 && r < 140) return 'info';
-  return 'default';
-}
-
-const SKELETON_COUNT = 5;
-const SKELETON_KEYS = Array.from({ length: SKELETON_COUNT }, (_, i) => String(i));
-
-function IssueSkeleton() {
-  return (
-    <Card>
-      <Box direction="column" gap="sm">
-        <Skeleton width="90%" height={16} />
-        <Skeleton width="70%" height={16} />
-        <Box direction="row" gap="xs">
-          <Skeleton width={56} height={20} radius="lg" />
-          <Skeleton width={56} height={20} radius="lg" />
-        </Box>
-        <Box direction="row" align="center" gap="xs">
-          <Skeleton width={24} height={24} radius="lg" />
-          <Skeleton width={80} height={12} />
-          <Skeleton width={60} height={12} />
-        </Box>
-      </Box>
-    </Card>
-  );
-}
-
-function IssueCard({ issue, index = 0 }: { issue: Issue; index?: number }) {
-  const { colors } = useTheme();
-  const reducedMotion = useReducedMotion();
-  const entering = reducedMotion ? undefined : FadeInDown.delay(index * 50).duration(300);
-  return (
-    <Animated.View entering={entering}>
-      <Card testID={`issue-card-${issue.id}`}>
-        <Box direction="column" gap="sm">
-          <Box direction="row" align="flex-start" gap="xs">
-            <Ionicons name="ellipse" size={10} color={colors.success} style={{ marginTop: 4 }} />
-            <Box flex={1}>
-              <Text weight="medium" numberOfLines={2}>
-                {issue.title}
-              </Text>
-            </Box>
-          </Box>
-
-          {issue.labels.length > 0 && (
-            <Box direction="row" gap="xs" wrap>
-              {issue.labels.map((label) => (
-                <Badge key={label.id} tone={labelColorToTone(label.color)} size="sm">
-                  {label.name}
-                </Badge>
-              ))}
-            </Box>
-          )}
-
-          <Box direction="row" align="center" justify="space-between">
-            <Box direction="row" align="center" gap="xs" flex={1}>
-              <Avatar uri={issue.user.avatar_url} fallback={issue.user.login} size="sm" />
-              <Text size="xs" tone="muted" numberOfLines={1}>
-                {issue.user.login} ·{' '}
-                {formatDistanceToNow(new Date(issue.created_at), { addSuffix: true, locale: ptBR })}
-              </Text>
-            </Box>
-            <Text size="xs" tone="muted" weight="medium">
-              #{issue.number}
-            </Text>
-          </Box>
-        </Box>
-      </Card>
-    </Animated.View>
-  );
-}
 
 export function IssuesScreen() {
   const { owner, repo } = useLocalSearchParams<{ owner: string; repo: string }>();
@@ -130,25 +51,13 @@ export function IssuesScreen() {
   ) : null;
 
   const title = `Issues · ${repo}`;
+  const headerOptions = getGithubStackScreenOptions({ title, colors });
 
   if (isLoading) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title,
-            headerStyle: { backgroundColor: colors.background },
-            headerTintColor: colors.text,
-            headerBackTitle: '',
-          }}
-        />
-        <Box flex={1} paddingTop="sm" testID="issues-skeleton">
-          {SKELETON_KEYS.map((key) => (
-            <Box key={key} paddingHorizontal="md" paddingBottom="sm">
-              <IssueSkeleton />
-            </Box>
-          ))}
-        </Box>
+        <Stack.Screen options={headerOptions} />
+        <IssuesSkeletonList />
       </>
     );
   }
@@ -156,41 +65,14 @@ export function IssuesScreen() {
   if (isError) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title,
-            headerStyle: { backgroundColor: colors.background },
-            headerTintColor: colors.text,
-            headerBackTitle: '',
-          }}
+        <Stack.Screen options={headerOptions} />
+        <GithubApiErrorState
+          isRateLimit={isRateLimit}
+          genericMessage="Não foi possível carregar as issues."
+          testID="issues-error"
+          retryTestID="issues-retry-button"
+          onRetry={refetch}
         />
-        <Box flex={1} align="center" justify="center" padding="xl" testID="issues-error">
-          {isRateLimit ? (
-            <Box direction="column" align="center" gap="sm">
-              <Ionicons name="warning-outline" size={48} color={colors.warning} />
-              <Text weight="bold" tone="danger">
-                Limite da API do GitHub atingido
-              </Text>
-              <Text tone="muted" size="sm">
-                Adicione EXPO_PUBLIC_GITHUB_TOKEN no .env para aumentar o limite para 5.000
-                requisições/hora.
-              </Text>
-            </Box>
-          ) : (
-            <Box direction="column" align="center" gap="md">
-              <Ionicons name="cloud-offline-outline" size={48} color={colors.muted} />
-              <Text tone="danger" weight="bold">
-                Algo deu errado
-              </Text>
-              <Text tone="muted" size="sm">
-                Não foi possível carregar as issues.
-              </Text>
-              <Button variant="outline" onPress={refetch} testID="issues-retry-button">
-                Tentar novamente
-              </Button>
-            </Box>
-          )}
-        </Box>
       </>
     );
   }
@@ -198,34 +80,15 @@ export function IssuesScreen() {
   if (issues.length === 0) {
     return (
       <>
-        <Stack.Screen
-          options={{
-            title,
-            headerStyle: { backgroundColor: colors.background },
-            headerTintColor: colors.text,
-            headerBackTitle: '',
-          }}
-        />
-        <Box flex={1} align="center" justify="center" padding="xl" testID="issues-empty">
-          <Ionicons name="checkmark-circle-outline" size={52} color={colors.border} />
-          <Box paddingTop="md">
-            <Text tone="muted" size="lg" weight="medium">
-              Nenhuma issue aberta
-            </Text>
-          </Box>
-          <Box paddingTop="xs">
-            <Text tone="muted" size="sm">
-              Este repositório não tem issues abertas.
-            </Text>
-          </Box>
-        </Box>
+        <Stack.Screen options={headerOptions} />
+        <IssuesEmptyState />
       </>
     );
   }
 
   return (
     <>
-      <Stack.Screen options={{ title }} />
+      <Stack.Screen options={headerOptions} />
       <FlatList
         data={issues}
         keyExtractor={(item) => String(item.id)}
@@ -237,6 +100,7 @@ export function IssuesScreen() {
         ListHeaderComponent={<Box paddingTop="sm" />}
         ListFooterComponent={ListFooter}
         contentContainerStyle={{ paddingBottom: spacing.xl }}
+        contentInsetAdjustmentBehavior="automatic"
         testID="issues-list"
       />
     </>

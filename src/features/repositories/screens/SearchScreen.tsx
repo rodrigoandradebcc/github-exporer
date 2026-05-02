@@ -5,6 +5,7 @@ import { ActivityIndicator, FlatList, Platform, StyleSheet, View } from 'react-n
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { Box, GlassView, Heading, Input, useTheme } from '@/design-system';
+import { GithubApiErrorState } from '@/features/github/components/GithubApiErrorState';
 import { useSearchRepositories } from '@/features/repositories/hooks/useSearchRepositories';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ApiError } from '@/services/api/client';
@@ -13,7 +14,6 @@ import type { Repository } from '@/services/api/types';
 import { SearchBottomTabBar } from '../components/SearchBottomTabBar';
 import { SearchEmptyPrompt } from '../components/SearchEmptyPrompt';
 import { SearchEmptyResults } from '../components/SearchEmptyResults';
-import { SearchGenericError, SearchRateLimitError } from '../components/SearchErrorStates';
 import { RepositoryCard } from '../components/RepositoryCard';
 import { SearchSkeletonList } from '../components/SearchSkeletonList';
 
@@ -88,7 +88,12 @@ export function SearchScreen() {
     if (isError) {
       return (
         <View style={insetStyle}>
-          {isRateLimit ? <SearchRateLimitError /> : <SearchGenericError onRetry={refetch} />}
+          <GithubApiErrorState
+            isRateLimit={isRateLimit}
+            genericMessage="Não foi possível acessar o GitHub. Verifique sua conexão e tente novamente."
+            testID={isRateLimit ? 'rate-limit-error' : 'generic-error'}
+            onRetry={refetch}
+          />
         </View>
       );
     }

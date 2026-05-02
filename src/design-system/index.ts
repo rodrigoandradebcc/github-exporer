@@ -40,3 +40,6 @@ export type { SkeletonProps } from './components/Skeleton';
 
 export { Switch } from './components/Switch';
 export type { SwitchProps } from './components/Switch';
+
+export { GlassView } from './components/GlassView';
+export type { GlassViewProps } from './components/GlassView';

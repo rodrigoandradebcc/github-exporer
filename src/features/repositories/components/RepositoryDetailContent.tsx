@@ -25,7 +25,7 @@ export function RepositoryDetailContent({
   const reducedMotion = useReducedMotion();
 
   return (
-    <ScrollView testID="repo-detail-scroll">
+    <ScrollView testID="repo-detail-scroll" contentInsetAdjustmentBehavior="automatic">
       <Box padding="md" direction="column" gap="md">
         <Animated.View entering={reducedMotion ? undefined : FadeInDown.duration(300)}>
           <Card testID="repo-detail-header">
