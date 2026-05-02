@@ -45,6 +45,7 @@ export function Input({
         <Text style={{ fontSize: sizes.sm, color: colors.text, fontWeight: '500' }}>{label}</Text>
       )}
       <View
+        testID={testID !== undefined ? `${testID}-container` : undefined}
         style={{
           flexDirection: 'row',
           alignItems: 'center',

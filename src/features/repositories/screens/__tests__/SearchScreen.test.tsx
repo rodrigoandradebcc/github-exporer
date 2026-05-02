@@ -146,7 +146,7 @@ describe('SearchScreen', () => {
 
     await waitFor(() => {
       expect(screen.getByTestId('generic-error')).toBeTruthy();
-      expect(screen.getByText('Try again')).toBeTruthy();
+      expect(screen.getByText('Tentar novamente')).toBeTruthy();
     });
   });
 
@@ -157,8 +157,8 @@ describe('SearchScreen', () => {
     renderWithTheme(<SearchScreen />);
     fireEvent.changeText(screen.getByTestId('search-input'), 'react');
 
-    await waitFor(() => screen.getByText('Try again'));
-    fireEvent.press(screen.getByText('Try again'));
+    await waitFor(() => screen.getByText('Tentar novamente'));
+    fireEvent.press(screen.getByText('Tentar novamente'));
     expect(refetch).toHaveBeenCalledTimes(1);
   });
 });

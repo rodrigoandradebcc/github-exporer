@@ -46,6 +46,6 @@ describe('Input', () => {
 
   it('uses danger border color when error is set', () => {
     renderWithTheme(<Input value="" onChangeText={jest.fn()} testID="input" error="Oops" />);
-    expect(screen.getByTestId('input').props.style.borderColor).toBe('#FF3B30');
+    expect(screen.getByTestId('input-container').props.style.borderColor).toBe('#FF3B30');
   });
 });

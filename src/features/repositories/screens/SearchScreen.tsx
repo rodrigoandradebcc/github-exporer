@@ -53,7 +53,7 @@ function EmptyResults({ query }: { query: string }) {
       <Ionicons name="albums-outline" size={48} color={colors.border} />
       <Box paddingTop="md">
         <Text tone="muted" weight="medium">
-          Nenhum resultado para "{query}"
+          {`Nenhum resultado para "${query}"`}
         </Text>
       </Box>
       <Box paddingTop="xs">
@@ -77,8 +77,8 @@ function RateLimitError() {
       </Box>
       <Box paddingTop="sm">
         <Text tone="muted" size="sm">
-          Limite de requisições sem autenticação atingido. Adicione EXPO_PUBLIC_GITHUB_TOKEN no
-          .env para aumentar o limite para 5.000 requisições/hora.
+          Limite de requisições sem autenticação atingido. Adicione EXPO_PUBLIC_GITHUB_TOKEN no .env
+          para aumentar o limite para 5.000 requisições/hora.
         </Text>
       </Box>
     </Box>
@@ -193,13 +193,16 @@ export function SearchScreen() {
         options={{
           title: 'GitHub Explorer',
           headerRight: () => (
-            <Box paddingRight="sm">
+            <Box direction="row" paddingRight="xs">
               <Button variant="ghost" size="sm" onPress={toggleMode}>
                 <Ionicons
                   name={mode === 'light' ? 'moon-outline' : 'sunny-outline'}
                   size={20}
                   color={colors.text}
                 />
+              </Button>
+              <Button variant="ghost" size="sm" onPress={() => router.push('/showcase')}>
+                <Ionicons name="color-palette-outline" size={20} color={colors.text} />
               </Button>
             </Box>
           ),

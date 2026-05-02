@@ -56,6 +56,9 @@ function IssueCard({ issue }: { issue: Issue }) {
             <Text weight="medium" numberOfLines={2}>
               {issue.title}
             </Text>
+            <Text size="xs" tone="muted">
+              #{issue.number}
+            </Text>
           </Box>
         </Box>
         {issue.labels.length > 0 && (
@@ -141,23 +144,26 @@ export function IssuesScreen() {
         <Box flex={1} align="center" justify="center" padding="xl" testID="issues-error">
           {isRateLimit ? (
             <Box direction="column" align="center" gap="sm">
+              <Ionicons name="warning-outline" size={48} color={colors.warning} />
               <Text weight="bold" tone="danger">
-                GitHub rate limit reached
+                Limite da API do GitHub atingido
               </Text>
               <Text tone="muted" size="sm">
-                Add EXPO_PUBLIC_GITHUB_TOKEN to increase the limit to 5 000 requests/hour.
+                Adicione EXPO_PUBLIC_GITHUB_TOKEN no .env para aumentar o limite para 5.000
+                requisições/hora.
               </Text>
             </Box>
           ) : (
             <Box direction="column" align="center" gap="md">
+              <Ionicons name="cloud-offline-outline" size={48} color={colors.muted} />
               <Text tone="danger" weight="bold">
-                Something went wrong
+                Algo deu errado
               </Text>
               <Text tone="muted" size="sm">
-                Could not load issues.
+                Não foi possível carregar as issues.
               </Text>
               <Button variant="outline" onPress={refetch} testID="issues-retry-button">
-                Try again
+                Tentar novamente
               </Button>
             </Box>
           )}
@@ -171,12 +177,15 @@ export function IssuesScreen() {
       <>
         <Stack.Screen options={{ title }} />
         <Box flex={1} align="center" justify="center" padding="xl" testID="issues-empty">
-          <Text tone="muted" size="lg">
-            No open issues
-          </Text>
+          <Ionicons name="checkmark-circle-outline" size={52} color={colors.border} />
+          <Box paddingTop="md">
+            <Text tone="muted" size="lg" weight="medium">
+              Nenhuma issue aberta
+            </Text>
+          </Box>
           <Box paddingTop="xs">
             <Text tone="muted" size="sm">
-              This repository has no open issues.
+              Este repositório não tem issues abertas.
             </Text>
           </Box>
         </Box>
