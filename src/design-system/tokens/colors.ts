@@ -7,7 +7,8 @@ export type ColorKey =
   | 'border'
   | 'success'
   | 'warning'
-  | 'danger';
+  | 'danger'
+  | 'info';
 export type ColorPalette = Record<ColorKey, string>;
 
 const lightColors: ColorPalette = {
@@ -20,6 +21,7 @@ const lightColors: ColorPalette = {
   success: '#34C759',
   warning: '#FF9500',
   danger: '#FF3B30',
+  info: '#0969DA',
 };
 
 const darkColors: ColorPalette = {
@@ -32,6 +34,7 @@ const darkColors: ColorPalette = {
   success: '#30D158',
   warning: '#FF9F0A',
   danger: '#FF453A',
+  info: '#388BFD',
 };
 
 export { lightColors, darkColors };

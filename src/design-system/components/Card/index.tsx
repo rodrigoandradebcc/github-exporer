@@ -22,7 +22,7 @@ export function Card({ padding = 'md', children, testID }: CardProps) {
         backgroundColor: colors.surface,
         borderWidth: 1,
         borderColor: colors.border,
-        borderRadius: radius.md,
+        borderRadius: radius.lg,
         padding: spacing[padding],
         shadowColor: '#000000',
         shadowOffset: { width: 0, height: 1 },

@@ -72,13 +72,13 @@ function RateLimitError() {
       <Ionicons name="warning-outline" size={48} color={colors.warning} />
       <Box paddingTop="md">
         <Text weight="bold" tone="danger">
-          GitHub rate limit reached
+          Limite da API do GitHub atingido
         </Text>
       </Box>
       <Box paddingTop="sm">
         <Text tone="muted" size="sm">
-          You have exceeded the unauthenticated API limit. Add your EXPO_PUBLIC_GITHUB_TOKEN to .env
-          to increase the limit to 5 000 requests/hour.
+          Limite de requisições sem autenticação atingido. Adicione EXPO_PUBLIC_GITHUB_TOKEN no
+          .env para aumentar o limite para 5.000 requisições/hora.
         </Text>
       </Box>
     </Box>
@@ -92,17 +92,17 @@ function GenericError({ onRetry }: { onRetry: () => void }) {
       <Ionicons name="cloud-offline-outline" size={48} color={colors.muted} />
       <Box paddingTop="md">
         <Text tone="danger" weight="bold">
-          Something went wrong
+          Algo deu errado
         </Text>
       </Box>
       <Box paddingTop="sm">
         <Text tone="muted" size="sm">
-          Could not reach GitHub. Check your connection and try again.
+          Não foi possível acessar o GitHub. Verifique sua conexão e tente novamente.
         </Text>
       </Box>
       <Box paddingTop="md">
         <Button variant="outline" onPress={onRetry}>
-          Try again
+          Tentar novamente
         </Button>
       </Box>
     </Box>
@@ -111,7 +111,7 @@ function GenericError({ onRetry }: { onRetry: () => void }) {
 
 export function SearchScreen() {
   const router = useRouter();
-  const { spacing, colors } = useTheme();
+  const { spacing, colors, mode, toggleMode } = useTheme();
   const [inputValue, setInputValue] = useState('');
   const debouncedQuery = useDebounce(inputValue, 500);
 
@@ -194,8 +194,12 @@ export function SearchScreen() {
           title: 'GitHub Explorer',
           headerRight: () => (
             <Box paddingRight="sm">
-              <Button variant="ghost" size="sm" onPress={() => router.push('/showcase')}>
-                DS
+              <Button variant="ghost" size="sm" onPress={toggleMode}>
+                <Ionicons
+                  name={mode === 'light' ? 'moon-outline' : 'sunny-outline'}
+                  size={20}
+                  color={colors.text}
+                />
               </Button>
             </Box>
           ),
@@ -209,6 +213,7 @@ export function SearchScreen() {
           autoCapitalize="none"
           keyboardType="web-search"
           returnKeyType="search"
+          leftIcon={<Ionicons name="search-outline" size={18} color={colors.muted} />}
           testID="search-input"
         />
       </Box>

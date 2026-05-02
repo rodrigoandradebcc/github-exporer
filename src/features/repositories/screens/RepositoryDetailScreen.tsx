@@ -3,7 +3,7 @@ import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
 import { ScrollView } from 'react-native';
 
-import { Avatar, Badge, Box, Button, Card, Heading, Skeleton, Text } from '@/design-system';
+import { Avatar, Badge, Box, Button, Card, Heading, Skeleton, Text, useTheme } from '@/design-system';
 import { useRepository } from '@/features/repositories/hooks/useRepository';
 import { ApiError } from '@/services/api/client';
 
@@ -46,6 +46,7 @@ function DetailSkeleton() {
 export function RepositoryDetailScreen() {
   const { owner, repo } = useLocalSearchParams<{ owner: string; repo: string }>();
   const router = useRouter();
+  const { colors } = useTheme();
   const { data, isLoading, isError, error, refetch } = useRepository(owner, repo);
 
   const isRateLimit = error instanceof ApiError && error.isRateLimit;
@@ -66,23 +67,26 @@ export function RepositoryDetailScreen() {
         <Box flex={1} align="center" justify="center" padding="xl" testID="detail-error">
           {isRateLimit ? (
             <Box direction="column" align="center" gap="sm">
+              <Ionicons name="warning-outline" size={48} color={colors.warning} />
               <Text weight="bold" tone="danger">
-                GitHub rate limit reached
+                Limite da API do GitHub atingido
               </Text>
               <Text tone="muted" size="sm">
-                Add EXPO_PUBLIC_GITHUB_TOKEN to increase the limit to 5 000 requests/hour.
+                Adicione EXPO_PUBLIC_GITHUB_TOKEN no .env para aumentar o limite para 5.000
+                requisições/hora.
               </Text>
             </Box>
           ) : (
             <Box direction="column" align="center" gap="md">
+              <Ionicons name="cloud-offline-outline" size={48} color={colors.muted} />
               <Text tone="danger" weight="bold">
-                Something went wrong
+                Algo deu errado
               </Text>
               <Text tone="muted" size="sm">
-                Could not load repository details.
+                Não foi possível carregar os detalhes do repositório.
               </Text>
               <Button variant="outline" onPress={refetch} testID="detail-retry-button">
-                Try again
+                Tentar novamente
               </Button>
             </Box>
           )}

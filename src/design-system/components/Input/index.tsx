@@ -10,6 +10,7 @@ export interface InputProps {
   error?: string;
   helperText?: string;
   placeholder?: string;
+  leftIcon?: React.ReactNode;
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   keyboardType?: 'default' | 'email-address' | 'numeric' | 'phone-pad' | 'url' | 'web-search';
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
@@ -25,6 +26,7 @@ export function Input({
   error,
   helperText,
   placeholder,
+  leftIcon,
   autoCapitalize,
   keyboardType,
   returnKeyType,
@@ -42,31 +44,43 @@ export function Input({
       {label !== undefined && (
         <Text style={{ fontSize: sizes.sm, color: colors.text, fontWeight: '500' }}>{label}</Text>
       )}
-      <TextInput
-        testID={testID}
-        value={value}
-        onChangeText={onChangeText}
-        placeholder={placeholder}
-        placeholderTextColor={colors.muted}
-        autoCapitalize={autoCapitalize}
-        keyboardType={keyboardType}
-        returnKeyType={returnKeyType}
-        secureTextEntry={secureTextEntry}
-        editable={!disabled}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
+      <View
         style={{
-          fontSize: sizes.md,
-          color: colors.text,
+          flexDirection: 'row',
+          alignItems: 'center',
           backgroundColor: colors.surface,
           borderWidth: 1,
           borderColor,
           borderRadius: radius.md,
-          paddingVertical: spacing.sm,
-          paddingHorizontal: spacing.md,
           minHeight: 44,
         }}
-      />
+      >
+        {leftIcon !== undefined && (
+          <View style={{ paddingLeft: spacing.sm }}>{leftIcon}</View>
+        )}
+        <TextInput
+          testID={testID}
+          value={value}
+          onChangeText={onChangeText}
+          placeholder={placeholder}
+          placeholderTextColor={colors.muted}
+          autoCapitalize={autoCapitalize}
+          keyboardType={keyboardType}
+          returnKeyType={returnKeyType}
+          secureTextEntry={secureTextEntry}
+          editable={!disabled}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          style={{
+            flex: 1,
+            fontSize: sizes.md,
+            color: colors.text,
+            paddingVertical: spacing.sm,
+            paddingLeft: leftIcon !== undefined ? spacing.xs : spacing.md,
+            paddingRight: spacing.md,
+          }}
+        />
+      </View>
       {error !== undefined && (
         <Text style={{ fontSize: sizes.xs, color: colors.danger }}>{error}</Text>
       )}

@@ -38,9 +38,9 @@ export function Badge({ tone = 'default', size = 'md', children, testID }: Badge
       border: colors.danger + BORDER_ALPHA,
     },
     info: {
-      bg: colors.primary + BG_ALPHA,
-      text: colors.primary,
-      border: colors.primary + BORDER_ALPHA,
+      bg: colors.info + BG_ALPHA,
+      text: colors.info,
+      border: colors.info + BORDER_ALPHA,
     },
   }[tone];
 

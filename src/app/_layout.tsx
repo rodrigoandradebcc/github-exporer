@@ -1,7 +1,7 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Stack } from 'expo-router';
 
-import { ThemeProvider } from '@/design-system';
+import { ThemeProvider, useTheme } from '@/design-system';
 import { ApiError } from '@/services/api/client';
 
 const queryClient = new QueryClient({
@@ -17,11 +17,22 @@ const queryClient = new QueryClient({
   },
 });
 
+function ThemedStack() {
+  const { colors } = useTheme();
+  return (
+    <Stack
+      screenOptions={{
+        contentStyle: { backgroundColor: colors.background },
+      }}
+    />
+  );
+}
+
 export default function RootLayout() {
   return (
     <QueryClientProvider client={queryClient}>
       <ThemeProvider>
-        <Stack />
+        <ThemedStack />
       </ThemeProvider>
     </QueryClientProvider>
   );
