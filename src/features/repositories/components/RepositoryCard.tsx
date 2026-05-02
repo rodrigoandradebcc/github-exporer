@@ -39,9 +39,7 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
     scale.value = withSpring(1, PRESS_SPRING);
   };
 
-  const entering = reducedMotion
-    ? undefined
-    : FadeInDown.delay(index * 50).duration(300);
+  const entering = reducedMotion ? undefined : FadeInDown.delay(index * 50).duration(300);
 
   const label = `Repositório ${repo.owner.login}/${repo.name}${repo.description ? `: ${repo.description}` : ''}`;
 

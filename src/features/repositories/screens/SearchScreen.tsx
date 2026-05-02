@@ -106,7 +106,7 @@ export function SearchScreen() {
 
       <SearchBottomTabBar
         bottomInset={insets.bottom}
-        onDesignPress={() => router.push('/showcase')}
+        onDesignPress={handleDesignPress}
         onLayout={(e) => setTabBarHeight(e.nativeEvent.layout.height)}
       />
     </View>

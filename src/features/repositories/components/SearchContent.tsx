@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback } from 'react';
+import React, { useCallback, useMemo } from 'react';
 import { ActivityIndicator, FlatList, Platform, View } from 'react-native';
 
 import { Box, Input, useTheme } from '@/design-system';
@@ -70,7 +70,10 @@ export function SearchContent({
       />
     </Box>
   );
-  const insetStyle = { flex: 1, paddingTop: headerHeight, paddingBottom: tabBarHeight };
+  const insetStyle = useMemo(
+    () => ({ flex: 1, paddingTop: headerHeight, paddingBottom: tabBarHeight }),
+    [headerHeight, tabBarHeight],
+  );
 
   const renderItem = useCallback(
     ({ item, index }: { item: Repository; index: number }) => (
@@ -86,11 +89,15 @@ export function SearchContent({
     [onRepoPress],
   );
 
-  const listFooter = isFetchingNextPage ? (
-    <Box paddingVertical="md" align="center">
-      <ActivityIndicator color={colors.primary} />
-    </Box>
-  ) : null;
+  const listFooter = useMemo(
+    () =>
+      isFetchingNextPage ? (
+        <Box paddingVertical="md" align="center">
+          <ActivityIndicator color={colors.primary} />
+        </Box>
+      ) : null,
+    [isFetchingNextPage, colors.primary],
+  );
 
   if (isLoading && hasQuery) {
     return (
