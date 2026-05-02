@@ -39,7 +39,7 @@ describe('Card', () => {
         <Text>Content</Text>
       </Card>,
     );
-    expect(screen.getByTestId('card').props.style.backgroundColor).toBe('#F6F8FA');
+    expect(screen.getByTestId('card').props.style.backgroundColor).toBe('#F4F1F2');
   });
 
   it('has border', () => {

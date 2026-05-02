@@ -50,7 +50,7 @@ describe('Button', () => {
       </Button>,
     );
     const style = StyleSheet.flatten(screen.getByTestId('btn').props.style);
-    expect(style.backgroundColor).toBe('#007AFF');
+    expect(style.backgroundColor).toBe('#D658B3');
   });
 
   it('outline variant has border', () => {
@@ -61,7 +61,7 @@ describe('Button', () => {
     );
     const style = StyleSheet.flatten(screen.getByTestId('btn').props.style);
     expect(style.borderWidth).toBe(1);
-    expect(style.borderColor).toBe('#007AFF');
+    expect(style.borderColor).toBe('#D658B3');
   });
 
   it('is visually dimmed when disabled', () => {

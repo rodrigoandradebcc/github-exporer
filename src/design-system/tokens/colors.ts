@@ -12,13 +12,13 @@ export type ColorKey =
 export type ColorPalette = Record<ColorKey, string>;
 
 const lightColors: ColorPalette = {
-  primary: '#007AFF',
-  background: '#FFFFFF',
-  surface: '#F6F8FA',
-  text: '#1F2328',
-  muted: '#636C76',
-  border: '#D0D7DE',
-  success: '#34C759',
+  primary: '#D658B3',
+  background: '#E9E7E9',
+  surface: '#F4F1F2',
+  text: '#4A4448',
+  muted: '#756C71',
+  border: '#DFDCDF',
+  success: '#45B442',
   warning: '#FF9500',
   danger: '#FF3B30',
   info: '#0969DA',
