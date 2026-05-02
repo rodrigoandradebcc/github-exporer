@@ -1,10 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { PER_PAGE, getRepositoryIssues } from '@/services/api/github';
+import { queryKeys } from '@/services/queryKeys';
 
 export function useRepositoryIssues(owner: string, repo: string) {
   return useInfiniteQuery({
-    queryKey: ['issues', owner, repo] as const,
+    queryKey: queryKeys.repositories.issues(owner, repo),
     queryFn: ({ pageParam }) => getRepositoryIssues({ owner, repo, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {

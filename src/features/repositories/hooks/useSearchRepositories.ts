@@ -1,10 +1,11 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 
 import { PER_PAGE, searchRepositories } from '@/services/api/github';
+import { queryKeys } from '@/services/queryKeys';
 
 export function useSearchRepositories(query: string) {
   return useInfiniteQuery({
-    queryKey: ['repositories', 'search', query] as const,
+    queryKey: queryKeys.repositories.search(query),
     queryFn: ({ pageParam }) => searchRepositories({ query, page: pageParam }),
     initialPageParam: 1,
     getNextPageParam: (lastPage, allPages) => {
