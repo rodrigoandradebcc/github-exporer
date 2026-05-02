@@ -17,7 +17,9 @@ interface IssueCardProps {
 export function IssueCard({ issue, index = 0 }: IssueCardProps) {
   const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
-  const entering = reducedMotion ? undefined : FadeInDown.delay(index * 50).duration(300);
+  const entering = reducedMotion
+    ? undefined
+    : FadeInDown.delay(Math.min(index, 5) * 50).duration(300);
 
   return (
     <Animated.View entering={entering}>

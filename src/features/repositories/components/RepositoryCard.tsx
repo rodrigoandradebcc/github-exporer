@@ -21,6 +21,8 @@ interface RepositoryCardProps {
 }
 
 const PRESS_SPRING = { stiffness: 400, damping: 30 };
+const STAGGER_MS = 50;
+const MAX_STAGGER_INDEX = 5;
 
 export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryCardProps) {
   const { colors } = useTheme();
@@ -39,7 +41,9 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
     scale.value = withSpring(1, PRESS_SPRING);
   };
 
-  const entering = reducedMotion ? undefined : FadeInDown.delay(index * 50).duration(300);
+  const entering = reducedMotion
+    ? undefined
+    : FadeInDown.delay(Math.min(index, MAX_STAGGER_INDEX) * STAGGER_MS).duration(300);
 
   const label = `Repositório ${repo.owner.login}/${repo.name}${repo.description ? `: ${repo.description}` : ''}`;
 
