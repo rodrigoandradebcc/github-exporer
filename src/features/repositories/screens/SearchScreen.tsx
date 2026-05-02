@@ -115,10 +115,7 @@ export function SearchScreen() {
 
   const handleRepoPress = useCallback(
     (repo: Repository) => {
-      router.push({
-        pathname: '/repository',
-        params: { owner: repo.owner.login, repo: repo.name },
-      });
+      router.push(`/repository/${repo.owner.login}/${repo.name}`);
     },
     [router],
   );
