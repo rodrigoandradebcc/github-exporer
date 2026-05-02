@@ -100,8 +100,8 @@ export function SearchContent({
   );
 
   const listContentStyle = useMemo(
-    () => ({ paddingTop: headerHeight, paddingBottom: tabBarHeight + spacing.xl }),
-    [headerHeight, tabBarHeight, spacing.xl],
+    () => ({ paddingTop: headerHeight }),
+    [headerHeight],
   );
 
   const listScrollInsets = useMemo(
@@ -109,14 +109,21 @@ export function SearchContent({
     [headerHeight, tabBarHeight],
   );
 
+  // Bottom padding lives in ListFooterComponent, not contentContainerStyle.paddingBottom,
+  // because Android ignores paddingBottom when data changes dynamically in FlatList.
+  // Math.max guards against tabBarHeight=0 before onLayout fires.
   const listFooter = useMemo(
-    () =>
-      isFetchingNextPage ? (
-        <Box paddingVertical="md" align="center">
-          <ActivityIndicator color={colors.primary} />
-        </Box>
-      ) : null,
-    [isFetchingNextPage, colors.primary],
+    () => (
+      <>
+        {isFetchingNextPage && (
+          <Box paddingVertical="md" align="center">
+            <ActivityIndicator color={colors.primary} />
+          </Box>
+        )}
+        <View style={{ height: Math.max(tabBarHeight, 60) + spacing.xl }} />
+      </>
+    ),
+    [isFetchingNextPage, colors.primary, tabBarHeight, spacing.xl],
   );
 
   if (isLoading && hasQuery) {

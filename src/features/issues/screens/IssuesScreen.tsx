@@ -14,7 +14,7 @@ import type { Issue } from '@/services/api/types';
 
 export function IssuesScreen() {
   const { owner, repo } = useLocalSearchParams<{ owner: string; repo: string }>();
-  const { spacing, colors } = useTheme();
+  const { colors } = useTheme();
 
   const {
     data,
@@ -48,12 +48,16 @@ export function IssuesScreen() {
   );
 
   const ListFooter = useMemo(
-    () =>
-      isFetchingNextPage ? (
-        <Box paddingVertical="md" align="center">
-          <ActivityIndicator color={colors.primary} />
-        </Box>
-      ) : null,
+    () => (
+      <>
+        {isFetchingNextPage && (
+          <Box paddingVertical="md" align="center">
+            <ActivityIndicator color={colors.primary} />
+          </Box>
+        )}
+        <Box paddingBottom="xl" />
+      </>
+    ),
     [isFetchingNextPage, colors.primary],
   );
 
@@ -106,7 +110,6 @@ export function IssuesScreen() {
         refreshing={isRefetching}
         ListHeaderComponent={<Box paddingTop="sm" />}
         ListFooterComponent={ListFooter}
-        contentContainerStyle={{ paddingBottom: spacing.xl }}
         contentInsetAdjustmentBehavior="automatic"
         testID="issues-list"
       />
