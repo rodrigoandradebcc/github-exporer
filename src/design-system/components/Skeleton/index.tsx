@@ -1,5 +1,14 @@
-import React, { useEffect, useRef } from 'react';
-import { Animated, Easing } from 'react-native';
+import React, { useEffect } from 'react';
+import Animated, {
+  cancelAnimation,
+  Easing,
+  useAnimatedStyle,
+  useReducedMotion,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 
 import { useTheme } from '../../theme/ThemeProvider';
 import type { RadiusKey } from '../../tokens/radius';
@@ -13,39 +22,39 @@ export interface SkeletonProps {
 
 export function Skeleton({ width = '100%', height = 16, radius = 'sm', testID }: SkeletonProps) {
   const { colors, radius: radiusTokens } = useTheme();
-  const opacity = useRef(new Animated.Value(0.4)).current;
+  const reducedMotion = useReducedMotion();
+  const opacity = useSharedValue(0.4);
 
   useEffect(() => {
-    const animation = Animated.loop(
-      Animated.sequence([
-        Animated.timing(opacity, {
-          toValue: 0.9,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-        Animated.timing(opacity, {
-          toValue: 0.4,
-          duration: 700,
-          easing: Easing.inOut(Easing.ease),
-          useNativeDriver: true,
-        }),
-      ]),
+    if (reducedMotion) {
+      cancelAnimation(opacity);
+      return;
+    }
+    opacity.value = withRepeat(
+      withSequence(
+        withTiming(0.9, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+        withTiming(0.4, { duration: 700, easing: Easing.inOut(Easing.ease) }),
+      ),
+      -1,
     );
-    animation.start();
-    return () => animation.stop();
-  }, [opacity]);
+  }, [opacity, reducedMotion]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+  }));
 
   return (
     <Animated.View
       testID={testID}
-      style={{
-        width,
-        height,
-        borderRadius: radiusTokens[radius],
-        backgroundColor: colors.border,
-        opacity,
-      }}
+      style={[
+        {
+          width,
+          height,
+          borderRadius: radiusTokens[radius],
+          backgroundColor: colors.border,
+        },
+        animatedStyle,
+      ]}
     />
   );
 }

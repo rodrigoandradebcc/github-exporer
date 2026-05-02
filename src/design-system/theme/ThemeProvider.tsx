@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { createContext, use, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { darkColors, lightColors, type ColorPalette } from '../tokens/colors';
 import type { Radius } from '../tokens/radius';
@@ -64,7 +64,7 @@ export function ThemeProvider({ children, initialMode = 'light' }: ThemeProvider
 }
 
 export function useTheme(): Theme {
-  const ctx = useContext(ThemeContext);
+  const ctx = use(ThemeContext);
   if (ctx === undefined) {
     throw new Error('useTheme must be used within a ThemeProvider');
   }
