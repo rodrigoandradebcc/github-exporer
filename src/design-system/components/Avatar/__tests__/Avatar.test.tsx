@@ -16,9 +16,7 @@ describe('Avatar', () => {
   });
 
   it('renders Image when uri is provided', () => {
-    renderWithTheme(
-      <Avatar testID="av" fallback="AB" uri="https://example.com/avatar.jpg" />,
-    );
+    renderWithTheme(<Avatar testID="av" fallback="AB" uri="https://example.com/avatar.jpg" />);
     expect(screen.getByTestId('avatar-image')).toBeTruthy();
     expect(screen.queryByTestId('avatar-fallback')).toBeNull();
   });

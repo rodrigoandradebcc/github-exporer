@@ -1,9 +1,5 @@
 import { apiClient } from './client';
-import type {
-  Issue,
-  RepositoryDetail,
-  SearchRepositoriesResponse,
-} from './types';
+import type { Issue, RepositoryDetail, SearchRepositoriesResponse } from './types';
 
 const PER_PAGE = 30;
 

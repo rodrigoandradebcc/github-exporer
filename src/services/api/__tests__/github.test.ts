@@ -141,8 +141,8 @@ describe('getRepositoryIssues', () => {
 
   it('propagates errors', async () => {
     mockGet.mockRejectedValueOnce(new Error('Rate limited'));
-    await expect(
-      getRepositoryIssues({ owner: 'facebook', repo: 'react' }),
-    ).rejects.toThrow('Rate limited');
+    await expect(getRepositoryIssues({ owner: 'facebook', repo: 'react' })).rejects.toThrow(
+      'Rate limited',
+    );
   });
 });

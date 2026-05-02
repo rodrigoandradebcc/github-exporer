@@ -22,11 +22,7 @@ export function RepositoryCard({ repo, onPress, testID }: RepositoryCardProps) {
         <Box direction="column" gap="xs">
           {/* Owner row */}
           <Box direction="row" align="center" gap="xs">
-            <Avatar
-              uri={repo.owner.avatar_url}
-              fallback={repo.owner.login}
-              size="sm"
-            />
+            <Avatar uri={repo.owner.avatar_url} fallback={repo.owner.login} size="sm" />
             <Text variant="label" size="xs" tone="muted">
               {repo.owner.login}
             </Text>

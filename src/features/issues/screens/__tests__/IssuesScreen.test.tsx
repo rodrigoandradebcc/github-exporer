@@ -93,7 +93,10 @@ describe('IssuesScreen', () => {
   });
 
   it('shows empty state when all items are pull requests', () => {
-    const pr = makeIssue({ id: 1, pull_request: { url: 'https://github.com/facebook/react/pull/1' } });
+    const pr = makeIssue({
+      id: 1,
+      pull_request: { url: 'https://github.com/facebook/react/pull/1' },
+    });
     withData({ data: { pages: [[pr]], pageParams: [1] } });
     renderWithTheme(<IssuesScreen />);
     expect(screen.getByTestId('issues-empty')).toBeTruthy();
@@ -112,7 +115,11 @@ describe('IssuesScreen', () => {
   });
 
   it('filters out pull requests from the issues list', () => {
-    const pr = makeIssue({ id: 1, title: 'PR: Add new feature', pull_request: { url: 'https://...' } });
+    const pr = makeIssue({
+      id: 1,
+      title: 'PR: Add new feature',
+      pull_request: { url: 'https://...' },
+    });
     const issue = makeIssue({ id: 2, title: 'Real issue' });
     withData({ data: { pages: [[pr, issue]], pageParams: [1] } });
     renderWithTheme(<IssuesScreen />);

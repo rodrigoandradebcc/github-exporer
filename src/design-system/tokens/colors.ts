@@ -1,16 +1,13 @@
-const colorSchema = {
-  primary: '',
-  background: '',
-  surface: '',
-  text: '',
-  muted: '',
-  border: '',
-  success: '',
-  warning: '',
-  danger: '',
-} as const;
-
-export type ColorKey = keyof typeof colorSchema;
+export type ColorKey =
+  | 'primary'
+  | 'background'
+  | 'surface'
+  | 'text'
+  | 'muted'
+  | 'border'
+  | 'success'
+  | 'warning'
+  | 'danger';
 export type ColorPalette = Record<ColorKey, string>;
 
 const lightColors: ColorPalette = {

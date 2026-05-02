@@ -1,4 +1,4 @@
-import { useRouter } from 'expo-router';
+import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
 import { ActivityIndicator, FlatList, Platform } from 'react-native';
 
@@ -165,6 +165,18 @@ export function SearchScreen() {
 
   return (
     <Box flex={1}>
+      <Stack.Screen
+        options={{
+          title: 'GitHub Explorer',
+          headerRight: () => (
+            <Box paddingRight="sm">
+              <Button variant="ghost" size="sm" onPress={() => router.push('/showcase')}>
+                DS
+              </Button>
+            </Box>
+          ),
+        }}
+      />
       <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="xs">
         <Input
           placeholder="Search GitHub repositories…"

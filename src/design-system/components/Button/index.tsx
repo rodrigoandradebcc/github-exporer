@@ -79,12 +79,14 @@ export function Button({
       ]}
     >
       {loading ? (
-        <ActivityIndicator testID="button-loading-indicator" color={variantMap.indicator} size="small" />
+        <ActivityIndicator
+          testID="button-loading-indicator"
+          color={variantMap.indicator}
+          size="small"
+        />
       ) : (
         <>
-          {leftIcon !== undefined && (
-            <View style={{ marginRight: spacing.xs }}>{leftIcon}</View>
-          )}
+          {leftIcon !== undefined && <View style={{ marginRight: spacing.xs }}>{leftIcon}</View>}
           <Text style={{ fontSize: sizeMap.fontSize, fontWeight: '600', color: variantMap.text }}>
             {children}
           </Text>

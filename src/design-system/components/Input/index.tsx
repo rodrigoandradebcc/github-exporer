@@ -13,6 +13,7 @@ export interface InputProps {
   autoCapitalize?: 'none' | 'sentences' | 'words' | 'characters';
   returnKeyType?: 'done' | 'go' | 'next' | 'search' | 'send';
   secureTextEntry?: boolean;
+  disabled?: boolean;
   testID?: string;
 }
 
@@ -26,6 +27,7 @@ export function Input({
   autoCapitalize,
   returnKeyType,
   secureTextEntry,
+  disabled = false,
   testID,
 }: InputProps) {
   const { colors, spacing, sizes, radius } = useTheme();
@@ -34,11 +36,9 @@ export function Input({
   const borderColor = error ? colors.danger : isFocused ? colors.primary : colors.border;
 
   return (
-    <View style={{ gap: spacing.xs }}>
+    <View style={{ gap: spacing.xs, opacity: disabled ? 0.5 : 1 }}>
       {label !== undefined && (
-        <Text style={{ fontSize: sizes.sm, color: colors.text, fontWeight: '500' }}>
-          {label}
-        </Text>
+        <Text style={{ fontSize: sizes.sm, color: colors.text, fontWeight: '500' }}>{label}</Text>
       )}
       <TextInput
         testID={testID}
@@ -49,6 +49,7 @@ export function Input({
         autoCapitalize={autoCapitalize}
         returnKeyType={returnKeyType}
         secureTextEntry={secureTextEntry}
+        editable={!disabled}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         style={{

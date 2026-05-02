@@ -13,8 +13,12 @@ describe('Heading', () => {
   it('level 1 has larger font size than level 3', () => {
     renderWithTheme(
       <>
-        <Heading testID="h1" level={1}>H1</Heading>
-        <Heading testID="h3" level={3}>H3</Heading>
+        <Heading testID="h1" level={1}>
+          H1
+        </Heading>
+        <Heading testID="h3" level={3}>
+          H3
+        </Heading>
       </>,
     );
     expect(screen.getByTestId('h1').props.style.fontSize).toBeGreaterThan(
@@ -23,12 +27,20 @@ describe('Heading', () => {
   });
 
   it('level 1 font size is 28', () => {
-    renderWithTheme(<Heading testID="h" level={1}>H1</Heading>);
+    renderWithTheme(
+      <Heading testID="h" level={1}>
+        H1
+      </Heading>,
+    );
     expect(screen.getByTestId('h').props.style.fontSize).toBe(28);
   });
 
   it('level 2 font size is 20', () => {
-    renderWithTheme(<Heading testID="h" level={2}>H2</Heading>);
+    renderWithTheme(
+      <Heading testID="h" level={2}>
+        H2
+      </Heading>,
+    );
     expect(screen.getByTestId('h').props.style.fontSize).toBe(20);
   });
 

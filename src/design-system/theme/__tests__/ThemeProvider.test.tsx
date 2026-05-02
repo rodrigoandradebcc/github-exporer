@@ -56,10 +56,7 @@ describe('ThemeProvider', () => {
 
     expect(screen.getByTestId('mode').props.children).toBe('dark');
     expect(screen.getByTestId('bg-color').props.children).toBe('#000000');
-    expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-      '@github_explorer/theme_mode',
-      'dark',
-    );
+    expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('@github_explorer/theme_mode', 'dark');
   });
 
   it('toggles back from dark to light', async () => {
@@ -74,10 +71,7 @@ describe('ThemeProvider', () => {
     });
 
     expect(screen.getByTestId('mode').props.children).toBe('light');
-    expect(mockAsyncStorage.setItem).toHaveBeenCalledWith(
-      '@github_explorer/theme_mode',
-      'light',
-    );
+    expect(mockAsyncStorage.setItem).toHaveBeenCalledWith('@github_explorer/theme_mode', 'light');
   });
 
   it('restores persisted mode from AsyncStorage', async () => {
@@ -109,9 +103,7 @@ describe('ThemeProvider', () => {
 
   it('throws when useTheme is called outside a provider', () => {
     const spy = jest.spyOn(console, 'error').mockImplementation(() => {});
-    expect(() => render(<TestConsumer />)).toThrow(
-      'useTheme must be used within a ThemeProvider',
-    );
+    expect(() => render(<TestConsumer />)).toThrow('useTheme must be used within a ThemeProvider');
     spy.mockRestore();
   });
 });

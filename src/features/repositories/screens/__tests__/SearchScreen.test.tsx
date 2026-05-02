@@ -12,6 +12,7 @@ import { SearchScreen } from '../SearchScreen';
 
 jest.mock('expo-router', () => ({
   useRouter: () => ({ push: jest.fn() }),
+  Stack: { Screen: () => null },
 }));
 
 jest.mock('@/features/repositories/hooks/useSearchRepositories');
@@ -96,7 +97,10 @@ describe('SearchScreen', () => {
   it('renders repository list when data is available', async () => {
     const repos = [makeRepo({ id: 1 }), makeRepo({ id: 2, name: 'redux' })];
     idleHook({
-      data: { pages: [{ total_count: 2, incomplete_results: false, items: repos }], pageParams: [1] },
+      data: {
+        pages: [{ total_count: 2, incomplete_results: false, items: repos }],
+        pageParams: [1],
+      },
     });
 
     renderWithTheme(<SearchScreen />);

@@ -37,3 +37,6 @@ export type { BoxProps } from './components/Box';
 
 export { Skeleton } from './components/Skeleton';
 export type { SkeletonProps } from './components/Skeleton';
+
+export { Switch } from './components/Switch';
+export type { SwitchProps } from './components/Switch';

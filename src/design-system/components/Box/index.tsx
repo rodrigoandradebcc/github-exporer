@@ -55,8 +55,7 @@ export function Box({
         justifyContent: justify,
         gap: gap !== undefined ? spacing[gap] : undefined,
         padding: padding !== undefined ? spacing[padding] : undefined,
-        paddingHorizontal:
-          paddingHorizontal !== undefined ? spacing[paddingHorizontal] : undefined,
+        paddingHorizontal: paddingHorizontal !== undefined ? spacing[paddingHorizontal] : undefined,
         paddingVertical: paddingVertical !== undefined ? spacing[paddingVertical] : undefined,
         paddingTop: paddingTop !== undefined ? spacing[paddingTop] : undefined,
         paddingBottom: paddingBottom !== undefined ? spacing[paddingBottom] : undefined,
