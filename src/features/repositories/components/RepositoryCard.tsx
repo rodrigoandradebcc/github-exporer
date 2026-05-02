@@ -1,12 +1,12 @@
 import { Ionicons } from '@expo/vector-icons';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Pressable } from 'react-native';
 import Animated, {
-  FadeInDown,
   useAnimatedStyle,
   useReducedMotion,
   useSharedValue,
   withSpring,
+  withTiming,
 } from 'react-native-reanimated';
 
 import { Avatar, Badge, Box, Card, Heading, Text, useTheme } from '@/design-system';
@@ -18,19 +18,45 @@ interface RepositoryCardProps {
   onPress: () => void;
   testID?: string;
   index?: number;
+  animate?: boolean;
 }
 
 const PRESS_SPRING = { stiffness: 400, damping: 30 };
 const STAGGER_MS = 50;
 const MAX_STAGGER_INDEX = 5;
+const ENTER_DURATION_MS = 300;
+const ENTER_OFFSET_Y = 16;
 
-export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryCardProps) {
+export function RepositoryCard({
+  repo,
+  onPress,
+  testID,
+  index = 0,
+  animate = true,
+}: RepositoryCardProps) {
   const { colors } = useTheme();
   const reducedMotion = useReducedMotion();
   const scale = useSharedValue(1);
 
+  const shouldAnimate = animate && !reducedMotion;
+  const opacity = useSharedValue(shouldAnimate ? 0 : 1);
+  const translateY = useSharedValue(shouldAnimate ? ENTER_OFFSET_Y : 0);
+
+  useEffect(() => {
+    if (!shouldAnimate) return;
+    const delay = Math.min(index, MAX_STAGGER_INDEX) * STAGGER_MS;
+    const id = setTimeout(() => {
+      opacity.value = withTiming(1, { duration: ENTER_DURATION_MS });
+      translateY.value = withTiming(0, { duration: ENTER_DURATION_MS });
+    }, delay);
+    return () => clearTimeout(id);
+    // Shared values and mount-time props intentionally excluded — runs once on mount only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const animatedStyle = useAnimatedStyle(() => ({
-    transform: [{ scale: scale.value }],
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }, { scale: scale.value }],
   }));
 
   const handlePressIn = () => {
@@ -40,10 +66,6 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
   const handlePressOut = () => {
     scale.value = withSpring(1, PRESS_SPRING);
   };
-
-  const entering = reducedMotion
-    ? undefined
-    : FadeInDown.delay(Math.min(index, MAX_STAGGER_INDEX) * STAGGER_MS).duration(300);
 
   const label = `Repositório ${repo.owner.login}/${repo.name}${repo.description ? `: ${repo.description}` : ''}`;
 
@@ -56,7 +78,7 @@ export function RepositoryCard({ repo, onPress, testID, index = 0 }: RepositoryC
       onPressOut={handlePressOut}
       testID={testID}
     >
-      <Animated.View style={animatedStyle} entering={entering}>
+      <Animated.View style={animatedStyle}>
         <Card padding="lg">
           <Box direction="column" gap="xs">
             <Box direction="row" align="center" justify="space-between">

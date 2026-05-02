@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useCallback, useMemo } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 import { ActivityIndicator, FlatList, Platform, View } from 'react-native';
 
 import { Box, Input, useTheme } from '@/design-system';
@@ -56,6 +56,11 @@ export function SearchContent({
 }: SearchContentProps) {
   const { colors, spacing } = useTheme();
 
+  const animatedIds = useRef(new Set<number>());
+  useEffect(() => {
+    animatedIds.current.clear();
+  }, [query]);
+
   const searchInput = (
     <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="xs">
       <Input
@@ -76,17 +81,32 @@ export function SearchContent({
   );
 
   const renderItem = useCallback(
-    ({ item, index }: { item: Repository; index: number }) => (
-      <Box paddingHorizontal="md" paddingBottom="sm">
-        <RepositoryCard
-          repo={item}
-          onPress={() => onRepoPress(item)}
-          testID={`repo-card-${item.id}`}
-          index={index}
-        />
-      </Box>
-    ),
+    ({ item, index }: { item: Repository; index: number }) => {
+      const animate = !animatedIds.current.has(item.id);
+      if (animate) animatedIds.current.add(item.id);
+      return (
+        <Box paddingHorizontal="md" paddingBottom="sm">
+          <RepositoryCard
+            repo={item}
+            onPress={() => onRepoPress(item)}
+            testID={`repo-card-${item.id}`}
+            index={index}
+            animate={animate}
+          />
+        </Box>
+      );
+    },
     [onRepoPress],
+  );
+
+  const listContentStyle = useMemo(
+    () => ({ paddingTop: headerHeight, paddingBottom: tabBarHeight + spacing.xl }),
+    [headerHeight, tabBarHeight, spacing.xl],
+  );
+
+  const listScrollInsets = useMemo(
+    () => ({ top: headerHeight, bottom: tabBarHeight }),
+    [headerHeight, tabBarHeight],
   );
 
   const listFooter = useMemo(
@@ -151,11 +171,8 @@ export function SearchContent({
       refreshing={isRefetching}
       ListHeaderComponent={searchInput}
       ListFooterComponent={listFooter}
-      contentContainerStyle={{
-        paddingTop: headerHeight,
-        paddingBottom: tabBarHeight + spacing.xl,
-      }}
-      scrollIndicatorInsets={{ top: headerHeight, bottom: tabBarHeight }}
+      contentContainerStyle={listContentStyle}
+      scrollIndicatorInsets={listScrollInsets}
       keyboardDismissMode={Platform.OS === 'ios' ? 'interactive' : 'on-drag'}
       testID="repos-list"
     />
