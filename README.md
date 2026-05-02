@@ -11,7 +11,7 @@
 
 ## Demonstração
 
-**[Ver demo ao vivo (Android & iOS)](https://jam.dev/c/ddd70b89-f8c8-47e6-9892-2f66754097b0)**
+**[Ver demo ao vivo (Android & iOS)](https://jam.dev/c/5283ff5e-7183-43a1-abf2-cb98687b0d6f)**
 
 ---
 
@@ -29,16 +29,16 @@
 
 ## Tecnologias
 
-| Tecnologia | Função |
-|---|---|
-| **Expo SDK 54 + Expo Router v6** | Roteamento baseado em arquivos, suporte a deep links e configuração de build gerenciada — o código foca no produto, não na infraestrutura |
-| **React Native 0.81 / React 19** | Alvo mobile multiplataforma com New Architecture (Fabric + TurboModules) habilitada |
-| **TanStack Query v5** | Cache de estado servidor com stale-while-revalidate, paginação infinita e controle de retentativas |
-| **React Native Reanimated 4** | Animações na thread nativa: entradas escalonadas nas listas e feedback de pressão nos cards |
-| **Axios** | Cliente HTTP; interceptors centralizam autenticação e normalização de erros (`ApiError`) |
-| **date-fns** | Utilitários de data leves e tree-shakable com locale pt-BR para timestamps relativos |
-| **TypeScript — `strict` + `noUncheckedIndexedAccess`** | Segurança máxima de tipos; captura bugs de acesso a array em tempo de compilação |
-| **Jest + jest-expo + Testing Library** | Testes unitários e de componentes que rodam sem dispositivo ou simulador |
+| Tecnologia                                             | Função                                                                                                                                    |
+| ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **Expo SDK 54 + Expo Router v6**                       | Roteamento baseado em arquivos, suporte a deep links e configuração de build gerenciada — o código foca no produto, não na infraestrutura |
+| **React Native 0.81 / React 19**                       | Alvo mobile multiplataforma com New Architecture (Fabric + TurboModules) habilitada                                                       |
+| **TanStack Query v5**                                  | Cache de estado servidor com stale-while-revalidate, paginação infinita e controle de retentativas                                        |
+| **React Native Reanimated 4**                          | Animações na thread nativa: entradas escalonadas nas listas e feedback de pressão nos cards                                               |
+| **Axios**                                              | Cliente HTTP; interceptors centralizam autenticação e normalização de erros (`ApiError`)                                                  |
+| **date-fns**                                           | Utilitários de data leves e tree-shakable com locale pt-BR para timestamps relativos                                                      |
+| **TypeScript — `strict` + `noUncheckedIndexedAccess`** | Segurança máxima de tipos; captura bugs de acesso a array em tempo de compilação                                                          |
+| **Jest + jest-expo + Testing Library**                 | Testes unitários e de componentes que rodam sem dispositivo ou simulador                                                                  |
 
 ---
 
@@ -85,12 +85,12 @@ npx expo start --android
 
 ## Scripts
 
-| Comando | Descrição |
-|---|---|
-| `npm test` | Executa o Jest uma vez (sem modo watch) |
-| `npm run lint` | ESLint em todos os arquivos fonte |
+| Comando              | Descrição                                        |
+| -------------------- | ------------------------------------------------ |
+| `npm test`           | Executa o Jest uma vez (sem modo watch)          |
+| `npm run lint`       | ESLint em todos os arquivos fonte                |
 | `npm run type-check` | `tsc --noEmit` — apenas erros de tipo, sem saída |
-| `npm run format` | Formatação com Prettier |
+| `npm run format`     | Formatação com Prettier                          |
 
 ---
 
@@ -144,11 +144,11 @@ Os três trechos em `src/app/showcase.tsx` que usam `View` com estilos inline (a
 
 ### Estratégia de cache com React Query
 
-| Query | `staleTime` | Justificativa |
-|---|---|---|
-| Busca de repositórios | 5 min | Evita sobrecarregar a API a cada tecla com debounce; resultados de busca mudam com pouca frequência |
-| Detalhe do repositório | 1 min | Dados relativamente estáticos; TTL menor mantém contadores de estrelas/forks razoavelmente atualizados |
-| Lista de issues | 5 min | Issues mudam com frequência em repos ativos, mas atualizações em tempo real não são um requisito |
+| Query                  | `staleTime` | Justificativa                                                                                          |
+| ---------------------- | ----------- | ------------------------------------------------------------------------------------------------------ |
+| Busca de repositórios  | 5 min       | Evita sobrecarregar a API a cada tecla com debounce; resultados de busca mudam com pouca frequência    |
+| Detalhe do repositório | 1 min       | Dados relativamente estáticos; TTL menor mantém contadores de estrelas/forks razoavelmente atualizados |
+| Lista de issues        | 5 min       | Issues mudam com frequência em repos ativos, mas atualizações em tempo real não são um requisito       |
 
 `refetchOnWindowFocus` está desabilitado globalmente — apps mobile não têm um evento de "foco de janela" significativo e o comportamento padrão dispararia refetches desnecessários a cada transição de navegação.
 
