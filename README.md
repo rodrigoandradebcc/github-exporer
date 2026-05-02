@@ -1,57 +1,77 @@
 # GitHub Explorer
 
-A React Native app for searching GitHub repositories, browsing repository details, and listing open issues. Built as a technical assessment showcasing component architecture, data fetching patterns, and design-system discipline.
+> Aplicativo React Native para buscar repositórios do GitHub, visualizar detalhes e listar issues abertas — desenvolvido como avaliação técnica com foco em arquitetura de componentes, gerenciamento de estado servidor e disciplina de design system.
+
+![Expo SDK](https://img.shields.io/badge/Expo-54-000020?logo=expo&logoColor=white)
+![React Native](https://img.shields.io/badge/React%20Native-0.81-61dafb?logo=react&logoColor=white)
+![TypeScript](https://img.shields.io/badge/TypeScript-strict-3178c6?logo=typescript&logoColor=white)
+![Tests](https://img.shields.io/badge/testes-87%20passando-brightgreen?logo=jest&logoColor=white)
 
 ---
 
-## Technologies
+## Funcionalidades
 
-| Technology | Why |
+- **Busca de repositórios** com input com debounce e scroll infinito
+- **Detalhe do repositório** — avatar do dono, descrição, estrelas, forks, watchers e linguagem principal
+- **Lista de issues abertas** — labels com cores, autor, data relativa (locale pt-BR) e número da issue
+- **Modo escuro / claro** com preferência persistida (AsyncStorage)
+- **Animações de entrada escalonadas** via React Native Reanimated
+- **Controle de rate limit** — detecta erros 403/429 do GitHub e exibe mensagem útil em vez de tentar novamente indefinidamente
+- **Showcase do design system** — demonstração ao vivo de todos os tokens e componentes em `/showcase`
+
+---
+
+## Tecnologias
+
+| Tecnologia | Função |
 |---|---|
-| **Expo SDK 54 + Expo Router v6** | File-based routing eliminates manual navigation boilerplate; deep-link support comes for free. Chosen over bare React Native to focus on product code rather than build configuration. |
-| **React Native 0.81 / React 19** | Cross-platform mobile target. |
-| **TanStack Query v5** | Handles server state (cache, stale-while-revalidate, infinite pagination, retries) declaratively. Avoids manual `useEffect`/`useState` data-fetching chains. |
-| **Axios** | Thin HTTP client; interceptors keep authentication and error normalisation in one place (`ApiError`). |
-| **date-fns** | Lightweight, tree-shakable date utilities with pt-BR locale for relative timestamps on issues. |
-| **TypeScript (strict + `noUncheckedIndexedAccess`)** | Maximum type safety. Catches array boundary bugs at compile time. |
-| **ESLint + Prettier** | Consistent code style, enforced via `npm run lint` and `npm run format`. |
-| **Jest + jest-expo + @testing-library/react-native** | Unit and component tests that run without a device or simulator. |
+| **Expo SDK 54 + Expo Router v6** | Roteamento baseado em arquivos, suporte a deep links e configuração de build gerenciada — o código foca no produto, não na infraestrutura |
+| **React Native 0.81 / React 19** | Alvo mobile multiplataforma com New Architecture (Fabric + TurboModules) habilitada |
+| **TanStack Query v5** | Cache de estado servidor com stale-while-revalidate, paginação infinita e controle de retentativas |
+| **React Native Reanimated 4** | Animações na thread nativa: entradas escalonadas nas listas e feedback de pressão nos cards |
+| **Axios** | Cliente HTTP; interceptors centralizam autenticação e normalização de erros (`ApiError`) |
+| **date-fns** | Utilitários de data leves e tree-shakable com locale pt-BR para timestamps relativos |
+| **TypeScript — `strict` + `noUncheckedIndexedAccess`** | Segurança máxima de tipos; captura bugs de acesso a array em tempo de compilação |
+| **Jest + jest-expo + Testing Library** | Testes unitários e de componentes que rodam sem dispositivo ou simulador |
 
 ---
 
-## Getting started
+## Como executar
 
-### Prerequisites
+### Pré-requisitos
 
 - Node.js 20+
-- iOS Simulator (Xcode) or Android Emulator, or the **Expo Go** app on a physical device
+- iOS Simulator (Xcode) **ou** Android Emulator **ou** o app [Expo Go](https://expo.dev/go) em um dispositivo físico
 
-### Install
+### Instalação
 
 ```bash
 npm install
 ```
 
-### Environment (optional)
+### Variáveis de ambiente (opcional)
 
-Without a token the GitHub API allows 60 unauthenticated requests/hour. For development, copy `.env.example` and add a Personal Access Token:
+Sem um token, a API do GitHub limita requisições não autenticadas a **60/hora**. Para desenvolvimento confortável, adicione um Personal Access Token:
 
 ```bash
 cp .env.example .env
-# edit .env and fill in your token
+# abra o .env e preencha o token
 ```
 
-```
-EXPO_PUBLIC_GITHUB_TOKEN=ghp_your_token_here
+```env
+EXPO_PUBLIC_GITHUB_TOKEN=ghp_seu_token_aqui
 ```
 
-The `EXPO_PUBLIC_` prefix is required by Expo SDK 49+ to expose variables to app code. The `.env` file is already listed in `.gitignore`.
+> [!NOTE]
+> O prefixo `EXPO_PUBLIC_` é exigido pelo Expo SDK 49+ para expor variáveis ao código do app. O arquivo `.env` já está no `.gitignore`.
 
-### Run
+Com um token o limite sobe para **5.000 requisições/hora**. O token precisa apenas da permissão padrão de leitura pública (sem escopos adicionais).
+
+### Execução
 
 ```bash
-npx expo start           # opens Expo CLI — press i for iOS, a for Android, w for web
-npx expo start --ios     # launches iOS Simulator directly
+npx expo start           # abre o Expo CLI — pressione i (iOS), a (Android), w (web)
+npx expo start --ios     # inicia o iOS Simulator diretamente
 npx expo start --android
 ```
 
@@ -59,28 +79,28 @@ npx expo start --android
 
 ## Scripts
 
-```bash
-npm test              # run Jest once (no watch)
-npm run lint          # ESLint across all source files
-npm run type-check    # tsc --noEmit (type errors only, no output)
-npm run format        # Prettier write pass
-```
+| Comando | Descrição |
+|---|---|
+| `npm test` | Executa o Jest uma vez (sem modo watch) |
+| `npm run lint` | ESLint em todos os arquivos fonte |
+| `npm run type-check` | `tsc --noEmit` — apenas erros de tipo, sem saída |
+| `npm run format` | Formatação com Prettier |
 
 ---
 
-## Project structure
+## Estrutura do projeto
 
 ```
 src/
-├── app/                        # Expo Router routes (thin wrappers only — no logic)
-│   ├── _layout.tsx             # Root layout: QueryClient + ThemeProvider + Stack
+├── app/                        # Rotas do Expo Router (apenas wrappers — sem lógica de negócio)
+│   ├── _layout.tsx             # Layout raiz: QueryClient + ThemeProvider + Stack
 │   ├── index.tsx               # / → SearchScreen
-│   ├── showcase.tsx            # /showcase → Design System showcase
+│   ├── showcase.tsx            # /showcase → Showcase do Design System
 │   └── repository/[owner]/[repo]/
 │       ├── index.tsx           # /repository/:owner/:repo → RepositoryDetailScreen
 │       └── issues.tsx          # /repository/:owner/:repo/issues → IssuesScreen
 │
-├── features/                   # Business domains, each self-contained
+├── features/                   # Domínios de negócio, cada um auto-contido
 │   ├── repositories/
 │   │   ├── components/         # RepositoryCard, RepositoryCardSkeleton
 │   │   ├── hooks/              # useSearchRepositories, useRepository
@@ -89,56 +109,56 @@ src/
 │       ├── hooks/              # useRepositoryIssues
 │       └── screens/            # IssuesScreen (+ __tests__)
 │
-├── services/api/               # HTTP layer: Axios client, typed GitHub API functions, ApiError
-├── design-system/              # Closed component library (index.ts is the only public surface)
+├── services/api/               # Camada HTTP: cliente Axios, funções tipadas da API do GitHub, ApiError
+├── design-system/              # Biblioteca de componentes fechada (index.ts é a única superfície pública)
 │   ├── tokens/                 # colors, spacing, radius, sizes
-│   ├── theme/                  # ThemeProvider + useTheme (persists mode to AsyncStorage)
+│   ├── theme/                  # ThemeProvider + useTheme (persiste o modo no AsyncStorage)
 │   └── components/             # Avatar, Badge, Box, Button, Card, Heading,
 │                               #   Input, Skeleton, Switch, Text
-└── hooks/                      # Shared generic hooks (useDebounce)
+└── hooks/                      # Hooks genéricos compartilhados (useDebounce)
 ```
 
 ---
 
-## Architectural decisions
+## Decisões arquiteturais
 
-### Feature-based organisation
+### Organização por feature
 
-Code is grouped by domain (`repositories`, `issues`) rather than by layer (`screens/`, `hooks/`, `components/`). Everything related to a feature is co-located. Adding a new domain means adding a new folder, not touching existing ones.
+O código é agrupado por domínio (`repositories`, `issues`) em vez de por camada (`screens/`, `hooks/`, `components/`). Tudo que pertence a uma feature fica co-localizado. Adicionar um novo domínio significa criar uma nova pasta, sem alterar as existentes.
 
-### Design system as a closed module
+### Design system como módulo fechado
 
-All DS components live under `src/design-system/` and the **only** public surface is `src/design-system/index.ts`. Feature screens may not import from internal DS paths. This enforces:
+Todos os componentes vivem em `src/design-system/` e a **única** superfície pública é `src/design-system/index.ts`. Telas de features não podem importar de caminhos internos do DS. Isso garante:
 
-- A single source of truth for all theme tokens — components access them via `useTheme()`, never as raw strings or hardcoded hex values
-- Zero inline styles in feature code — every visual property is a named prop accepted by a DS component
-- Easy auditing: any style change is contained inside DS components, not scattered across screens
+- Fonte única de verdade para todos os tokens de tema — componentes os leem via `useTheme()`, nunca como strings brutas ou valores hex hardcoded.
+- Zero estilos inline no código de features — toda propriedade visual é uma prop nomeada em um componente do DS.
+- Auditoria fácil — qualquer mudança de estilo fica contida nos componentes do DS, não espalhada pelas telas.
 
-The three places in `src/app/showcase.tsx` that use `View` with inline styles (color swatches, spacing bars, section divider) are intentional and documented in comments — they are intrinsically about rendering raw token values.
+Os três pontos em `src/app/showcase.tsx` que usam `View` com estilos inline (amostras de cores, barras de espaçamento, divisor de seção) são intencionais — existem para renderizar os valores brutos dos tokens como espécimes visuais.
 
-### React Query cache strategy
+### Estratégia de cache com React Query
 
-| Query | `staleTime` | Rationale |
+| Query | `staleTime` | Justificativa |
 |---|---|---|
-| Repository search | 5 min | Search results change infrequently; avoids hammering the API on every debounced keystroke |
-| Repository detail | 1 min | Detail data is relatively static; shorter TTL keeps star/fork counts reasonably fresh |
-| Issues list | 5 min | Issues change often in active repos but real-time updates are not a requirement here |
+| Busca de repositórios | 5 min | Evita sobrecarregar a API a cada tecla com debounce; resultados de busca mudam com pouca frequência |
+| Detalhe do repositório | 1 min | Dados relativamente estáticos; TTL menor mantém contadores de estrelas/forks razoavelmente atualizados |
+| Lista de issues | 5 min | Issues mudam com frequência em repos ativos, mas atualizações em tempo real não são um requisito |
 
-`refetchOnWindowFocus` is disabled globally — mobile apps don't have a meaningful "window focus" event and the default behaviour would trigger unnecessary refetches on every navigation transition.
+`refetchOnWindowFocus` está desabilitado globalmente — apps mobile não têm um evento de "foco de janela" significativo e o comportamento padrão dispararia refetches desnecessários a cada transição de navegação.
 
-### Error handling and rate limits
+### Tratamento de erros e rate limit
 
-All Axios errors are normalised into `ApiError` (status, message, `isRateLimit`). The `isRateLimit` flag (set for HTTP 403 and 429) disables automatic retries in the root `QueryClient` and triggers a dedicated error state in every screen that explains the limit and suggests adding `EXPO_PUBLIC_GITHUB_TOKEN`. Generic network errors get a retry button that re-executes the failed query.
+Todos os erros do Axios são normalizados em `ApiError` (status, message, `isRateLimit`). O flag `isRateLimit` (HTTP 403 e 429) desabilita retentativas automáticas no `QueryClient` raiz e exibe um estado de erro dedicado em cada tela, explicando o limite e sugerindo adicionar `EXPO_PUBLIC_GITHUB_TOKEN`. Erros de rede genéricos recebem um botão de nova tentativa que re-executa a query falha.
 
 ---
 
-## What I would do with more time
+## O que eu faria com mais tempo
 
-- **Issue detail screen** — render the issue body (Markdown) and comments thread.
-- **Offline support** — persist the React Query cache to AsyncStorage via `@tanstack/query-async-storage-persister` so previously loaded data is available without a network connection.
-- **E2E tests** — Detox or Maestro tests covering the search → detail → issues flow on a real simulator, which type checking and unit tests cannot catch.
-- **Accessibility** — add `accessibilityLabel` / `accessibilityHint` to all interactive elements, audit contrast ratios against WCAG AA, smoke-test with VoiceOver and TalkBack.
-- **Design token expansion** — add typography tokens (font family, line heights) and a motion token for consistent animation durations across `Skeleton` and micro-interactions.
-- **Error boundaries** — wrap the root `Stack` in a React error boundary to catch unexpected runtime errors gracefully instead of showing a blank screen.
-- **CI pipeline** — GitHub Actions workflow running `type-check`, `lint`, and `test` on every pull request before merge.
-- **Pagination UX** — the current infinite scroll is functional but a cursor-based pagination strategy with a visible "load more" affordance would be more reliable for repos with thousands of issues.
+- **Tela de detalhe de issue** — renderizar o corpo da issue (Markdown) e a thread de comentários.
+- **Suporte offline** — persistir o cache do React Query no AsyncStorage via `@tanstack/query-async-storage-persister` para que dados já carregados fiquem disponíveis sem conexão.
+- **Testes E2E** — testes com Detox ou Maestro cobrindo o fluxo busca → detalhe → issues em um simulador real, o que verificação de tipos e testes unitários não conseguem capturar.
+- **Acessibilidade** — adicionar `accessibilityLabel` / `accessibilityHint` em todos os elementos interativos, auditar contraste de cores contra WCAG AA e testar com VoiceOver e TalkBack.
+- **Expansão de tokens** — adicionar tokens de tipografia (família de fonte, altura de linha) e um token de motion para durações de animação consistentes em `Skeleton` e micro-interações.
+- **Error boundaries** — envolver o `Stack` raiz em um error boundary React para capturar erros inesperados de runtime de forma elegante em vez de exibir uma tela em branco.
+- **Pipeline de CI** — workflow no GitHub Actions executando `type-check`, `lint` e `test` em todo pull request antes do merge.
+- **UX de paginação** — o scroll infinito atual é funcional, mas uma estratégia baseada em cursor com um botão visível de "carregar mais" seria mais confiável para repos com milhares de issues.
