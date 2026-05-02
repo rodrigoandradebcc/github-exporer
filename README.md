@@ -9,6 +9,23 @@
 
 ---
 
+## Requisitos atendidos
+
+| Requisito | Status | Detalhes |
+| --- | --- | --- |
+| App Expo + TypeScript funcional | ✅ | Expo SDK 54, TypeScript `strict` + `noUncheckedIndexedAccess` |
+| App inicia sem erros | ✅ | Testado em iOS Simulator, Android Emulator e Expo Go |
+| Busca de repositórios com paginação | ✅ | Scroll infinito via TanStack Query `useInfiniteQuery` + `onEndReached` |
+| Toque abre detalhes do repositório | ✅ | Navegação Expo Router para `/repository/:owner/:repo` |
+| Design System mínimo e tipado | ✅ | Tokens tipados (colors, spacing, radius, sizes) + 10 componentes base |
+| Showcase exibe todos os componentes | ✅ | Tela `/showcase` lista Avatar, Badge, Box, Button, Card, Heading, Input, Skeleton, Switch, Text com variações |
+| Integração com API do GitHub | ✅ | Axios com interceptors; funções tipadas em `src/services/api/github.ts` |
+| Cache controlado via biblioteca | ✅ | TanStack Query v5: staleTime por rota, paginação infinita e retry inteligente |
+| Commits pequenos e descritivos | ✅ | Convenção Conventional Commits (`feat:`, `fix:`, `refactor:`, `docs:`) |
+| README com instalação e arquitetura | ✅ | Seções abaixo |
+
+---
+
 ## Demonstração
 
 **[Ver demo ao vivo (Android & iOS)](https://jam.dev/c/5283ff5e-7183-43a1-abf2-cb98687b0d6f)**
@@ -46,12 +63,24 @@
 
 ### Pré-requisitos
 
-- Node.js 20+
-- iOS Simulator (Xcode) **ou** Android Emulator **ou** o app [Expo Go](https://expo.dev/go) em um dispositivo físico
+| Ferramenta | Versão mínima | Observação |
+| --- | --- | --- |
+| Node.js | 20+ | Recomendado via [nvm](https://github.com/nvm-sh/nvm) |
+| npm | 10+ | Incluído no Node.js 20 |
+| Xcode | 15+ | Apenas para iOS Simulator (macOS) |
+| Android Studio | Hedgehog+ | Apenas para Android Emulator |
+| Expo Go | atual | Alternativa sem emulador — instale no dispositivo físico |
+
+Não é necessário instalar Expo CLI globalmente; todos os comandos usam `npx`.
 
 ### Instalação
 
 ```bash
+# 1. Clone o repositório
+git clone https://github.com/rodrigo-andrade-dev/github-explorer.git
+cd github-explorer
+
+# 2. Instale as dependências
 npm install
 ```
 
@@ -71,15 +100,17 @@ EXPO_PUBLIC_GITHUB_TOKEN=ghp_seu_token_aqui
 > [!NOTE]
 > O prefixo `EXPO_PUBLIC_` é exigido pelo Expo SDK 49+ para expor variáveis ao código do app. O arquivo `.env` já está no `.gitignore`.
 
-Com um token o limite sobe para **5.000 requisições/hora**. O token precisa apenas da permissão padrão de leitura pública (sem escopos adicionais).
+Com um token o limite sobe para **5.000 requisições/hora**. O token precisa apenas da permissão padrão de leitura pública (sem escopos adicionais). Crie um em **GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)**.
 
 ### Execução
 
 ```bash
 npx expo start           # abre o Expo CLI — pressione i (iOS), a (Android), w (web)
 npx expo start --ios     # inicia o iOS Simulator diretamente
-npx expo start --android
+npx expo start --android # inicia o Android Emulator diretamente
 ```
+
+Ao usar **Expo Go** no celular, escaneie o QR Code exibido no terminal com a câmera (iOS) ou pelo próprio app Expo Go (Android).
 
 ---
 
@@ -132,23 +163,41 @@ src/
 
 O código é agrupado por domínio (`repositories`, `issues`) em vez de por camada (`screens/`, `hooks/`, `components/`). Tudo que pertence a uma feature fica co-localizado. Adicionar um novo domínio significa criar uma nova pasta, sem alterar as existentes.
 
-### Design system como módulo fechado
+```
+src/features/
+├── repositories/     # busca, detalhe, componentes e hooks de repositório
+├── issues/           # listagem, componentes e hooks de issues
+└── github/           # utilitários compartilhados entre features GitHub
+```
 
-Todos os componentes vivem em `src/design-system/` e a **única** superfície pública é `src/design-system/index.ts`. Telas de funcionalidades não podem importar diretamente de caminhos internos do DS. Isso garante:
+### Design System como módulo fechado
 
-- Fonte única de verdade para todos os tokens de tema — os componentes os leem via `useTheme()`, nunca como strings brutas ou valores hex fixos no código.
-- Zero estilos inline no código de funcionalidades — toda propriedade visual é uma prop nomeada em um componente do DS.
-- Manutenção facilitada — qualquer mudança de estilo fica contida nos componentes do DS, sem se espalhar pelas telas.
+Todos os componentes vivem em `src/design-system/` e a **única** superfície pública é `src/design-system/index.ts`. Telas de funcionalidades não podem importar diretamente de caminhos internos do DS.
 
-Os três trechos em `src/app/showcase.tsx` que usam `View` com estilos inline (amostras de cores, barras de espaçamento, divisor de seção) são intencionais — existem para renderizar os valores brutos dos tokens como amostras visuais.
+**Tokens disponíveis:**
 
-### Estratégia de cache com React Query
+| Token | Valores | Arquivo |
+| --- | --- | --- |
+| `colors` | paleta semântica clara/escura | `tokens/colors.ts` |
+| `spacing` | escala 4px (`xs` → `xxxl`) | `tokens/spacing.ts` |
+| `radius` | `sm`, `md`, `lg`, `full` | `tokens/radius.ts` |
+| `sizes` | alturas fixas de componentes | `tokens/sizes.ts` |
 
-| Query                  | `staleTime` | Justificativa                                                                                          |
-| ---------------------- | ----------- | ------------------------------------------------------------------------------------------------------ |
-| Busca de repositórios  | 5 min       | Evita sobrecarregar a API a cada tecla com debounce; resultados de busca mudam com pouca frequência    |
-| Detalhe do repositório | 1 min       | Dados relativamente estáticos; TTL menor mantém contadores de estrelas/forks razoavelmente atualizados |
-| Lista de issues        | 5 min       | Issues mudam com frequência em repos ativos, mas atualizações em tempo real não são um requisito       |
+**Componentes disponíveis:** `Avatar`, `Badge`, `Box`, `Button`, `Card`, `GlassView`, `Heading`, `Input`, `Skeleton`, `Switch`, `Text`
+
+Todos leem tokens via `useTheme()` — zero valores hex fixos ou estilos inline fora do DS. A tela `/showcase` demonstra cada componente com suas variações ao vivo.
+
+### Paginação infinita
+
+`useSearchRepositories` usa `useInfiniteQuery` do TanStack Query. O parâmetro `page` é gerenciado pela chave de query; `getNextPageParam` extrai o número da próxima página da resposta da API. O `FlatList` dispara `fetchNextPage` via `onEndReached` quando o usuário se aproxima do fim da lista. Skeletons de carregamento aparecem durante o fetch das páginas seguintes sem bloquear o scroll.
+
+### Estratégia de cache com TanStack Query v5
+
+| Query | `staleTime` | Justificativa |
+| --- | --- | --- |
+| Busca de repositórios | 5 min | Evita sobrecarregar a API a cada tecla com debounce; resultados mudam com pouca frequência |
+| Detalhe do repositório | 1 min | Dados relativamente estáticos; TTL menor mantém contadores de estrelas/forks razoavelmente atualizados |
+| Lista de issues | 5 min | Issues mudam em repos ativos, mas atualizações em tempo real não são um requisito |
 
 `refetchOnWindowFocus` está desabilitado globalmente — apps mobile não têm um evento de "foco de janela" significativo e o comportamento padrão dispararia refetches desnecessários a cada transição de navegação.
 
