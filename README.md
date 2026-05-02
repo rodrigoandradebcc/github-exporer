@@ -9,6 +9,12 @@
 
 ---
 
+## Demonstração
+
+**[Ver demo ao vivo (Android & iOS)](https://jam.dev/c/ddd70b89-f8c8-47e6-9892-2f66754097b0)**
+
+---
+
 ## Funcionalidades
 
 - **Busca de repositórios** com input com debounce e scroll infinito
@@ -128,13 +134,13 @@ O código é agrupado por domínio (`repositories`, `issues`) em vez de por cama
 
 ### Design system como módulo fechado
 
-Todos os componentes vivem em `src/design-system/` e a **única** superfície pública é `src/design-system/index.ts`. Telas de features não podem importar de caminhos internos do DS. Isso garante:
+Todos os componentes vivem em `src/design-system/` e a **única** superfície pública é `src/design-system/index.ts`. Telas de funcionalidades não podem importar diretamente de caminhos internos do DS. Isso garante:
 
-- Fonte única de verdade para todos os tokens de tema — componentes os leem via `useTheme()`, nunca como strings brutas ou valores hex hardcoded.
-- Zero estilos inline no código de features — toda propriedade visual é uma prop nomeada em um componente do DS.
-- Auditoria fácil — qualquer mudança de estilo fica contida nos componentes do DS, não espalhada pelas telas.
+- Fonte única de verdade para todos os tokens de tema — os componentes os leem via `useTheme()`, nunca como strings brutas ou valores hex fixos no código.
+- Zero estilos inline no código de funcionalidades — toda propriedade visual é uma prop nomeada em um componente do DS.
+- Manutenção facilitada — qualquer mudança de estilo fica contida nos componentes do DS, sem se espalhar pelas telas.
 
-Os três pontos em `src/app/showcase.tsx` que usam `View` com estilos inline (amostras de cores, barras de espaçamento, divisor de seção) são intencionais — existem para renderizar os valores brutos dos tokens como espécimes visuais.
+Os três trechos em `src/app/showcase.tsx` que usam `View` com estilos inline (amostras de cores, barras de espaçamento, divisor de seção) são intencionais — existem para renderizar os valores brutos dos tokens como amostras visuais.
 
 ### Estratégia de cache com React Query
 
