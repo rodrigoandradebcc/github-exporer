@@ -1,10 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Platform, View } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, Pressable, Text as RNText, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Box, Button, Heading, Input, Text, useTheme } from '@/design-system';
+import { Badge, Box, Button, Heading, Input, Text, useTheme } from '@/design-system';
 import { useSearchRepositories } from '@/features/repositories/hooks/useSearchRepositories';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ApiError } from '@/services/api/client';
@@ -28,20 +28,43 @@ function SkeletonList() {
   );
 }
 
-function EmptyPrompt() {
+const SUGGESTED_TOPICS = ['react-native', 'typescript', 'expo', 'next.js', 'tailwindcss', 'python'];
+
+function EmptyPrompt({ onSelectTopic }: { onSelectTopic: (topic: string) => void }) {
   const { colors } = useTheme();
   return (
-    <Box flex={1} align="center" justify="center" padding="xl" testID="empty-prompt">
-      <Ionicons name="search-outline" size={52} color={colors.border} />
-      <Box paddingTop="md">
-        <Text tone="muted" size="lg" weight="medium">
-          Buscar repositórios
-        </Text>
+    <Box flex={1} testID="empty-prompt">
+      {/* Centered icon + text */}
+      <Box flex={1} align="center" justify="center" padding="xl">
+        <Ionicons name="search-outline" size={52} color={colors.border} />
+        <Box paddingTop="md">
+          <Text tone="muted" size="lg" weight="medium">
+            Buscar repositórios
+          </Text>
+        </Box>
+        <Box paddingTop="xs">
+          <Text tone="muted" size="sm">
+            Digite um nome ou tópico para começar
+          </Text>
+        </Box>
       </Box>
-      <Box paddingTop="xs">
-        <Text tone="muted" size="sm">
-          Digite um nome ou tópico para começar
+
+      {/* Suggestions section at the bottom */}
+      <Box paddingHorizontal="xl" paddingBottom="xl">
+        <Text variant="label" size="xs" tone="muted">
+          SUGESTÕES
         </Text>
+        <Box paddingTop="sm">
+          <Box direction="row" wrap gap="sm">
+            {SUGGESTED_TOPICS.map((topic) => (
+              <Pressable key={topic} onPress={() => onSelectTopic(topic)}>
+                <Badge tone="info" size="sm">
+                  {topic}
+                </Badge>
+              </Pressable>
+            ))}
+          </Box>
+        </Box>
       </Box>
     </Box>
   );
@@ -112,7 +135,7 @@ function GenericError({ onRetry }: { onRetry: () => void }) {
 
 export function SearchScreen() {
   const router = useRouter();
-  const { spacing, colors, mode, toggleMode } = useTheme();
+  const { spacing, colors } = useTheme();
   const insets = useSafeAreaInsets();
   const [inputValue, setInputValue] = useState('');
   const debouncedQuery = useDebounce(inputValue, 500);
@@ -168,7 +191,7 @@ export function SearchScreen() {
   const renderContent = () => {
     if (isLoading && hasQuery) return <SkeletonList />;
     if (isError) return isRateLimit ? <RateLimitError /> : <GenericError onRetry={refetch} />;
-    if (!hasQuery) return <EmptyPrompt />;
+    if (!hasQuery) return <EmptyPrompt onSelectTopic={setInputValue} />;
     if (repos.length === 0) return <EmptyResults query={debouncedQuery} />;
 
     return (
@@ -218,31 +241,51 @@ export function SearchScreen() {
       {/* Content area */}
       <View style={{ flex: 1 }}>{renderContent()}</View>
 
-      {/* Bottom navigation bar */}
+      {/* Bottom tab bar */}
       <View
         style={{
           flexDirection: 'row',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          paddingHorizontal: spacing.md,
-          paddingTop: spacing.xs,
-          paddingBottom: Math.max(insets.bottom, spacing.sm),
           borderTopWidth: 1,
           borderTopColor: colors.border,
           backgroundColor: colors.surface,
-          gap: spacing.xs,
+          paddingTop: spacing.xs,
+          paddingBottom: Math.max(insets.bottom, spacing.sm),
         }}
       >
-        <Button variant="ghost" size="sm" onPress={toggleMode}>
-          <Ionicons
-            name={mode === 'light' ? 'moon-outline' : 'sunny-outline'}
-            size={22}
-            color={colors.text}
-          />
-        </Button>
-        <Button variant="ghost" size="sm" onPress={() => router.push('/showcase')}>
-          <Ionicons name="color-palette-outline" size={22} color={colors.text} />
-        </Button>
+        {(
+          [
+            { key: 'busca', label: 'Busca', icon: 'search-outline', iconActive: 'search', active: true, onPress: undefined },
+            {
+              key: 'ds',
+              label: 'Design',
+              icon: 'color-palette-outline',
+              iconActive: 'color-palette',
+              active: false,
+              onPress: () => router.push('/showcase'),
+            },
+          ] as const
+        ).map((tab) => (
+          <Pressable
+            key={tab.key}
+            onPress={tab.onPress}
+            style={{ flex: 1, alignItems: 'center', justifyContent: 'center', gap: 3, paddingVertical: spacing.xs }}
+          >
+            <Ionicons
+              name={tab.active ? tab.iconActive : tab.icon}
+              size={24}
+              color={tab.active ? colors.primary : colors.muted}
+            />
+            <RNText
+              style={{
+                fontSize: 11,
+                color: tab.active ? colors.primary : colors.muted,
+                fontWeight: tab.active ? '600' : '400',
+              }}
+            >
+              {tab.label}
+            </RNText>
+          </Pressable>
+        ))}
       </View>
     </View>
   );

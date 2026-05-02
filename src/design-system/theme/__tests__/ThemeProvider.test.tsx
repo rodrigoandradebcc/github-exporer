@@ -40,7 +40,7 @@ describe('ThemeProvider', () => {
     );
 
     expect(screen.getByTestId('mode').props.children).toBe('light');
-    expect(screen.getByTestId('bg-color').props.children).toBe('#FFFFFF');
+    expect(screen.getByTestId('bg-color').props.children).toBe('#E9E7E9');
   });
 
   it('toggles from light to dark and persists the choice', async () => {

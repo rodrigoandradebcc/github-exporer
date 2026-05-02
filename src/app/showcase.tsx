@@ -58,7 +58,14 @@ export default function ShowcaseScreen() {
 
   return (
     <>
-      <Stack.Screen options={{ title: 'Design System' }} />
+      <Stack.Screen
+        options={{
+          title: 'Design System',
+          headerStyle: { backgroundColor: colors.background },
+          headerTintColor: colors.text,
+          headerBackTitle: '',
+        }}
+      />
       <ScrollView>
         <Box padding="md" direction="column" gap="xl" paddingBottom="xl">
           {/* ── 1. Theme ─────────────────────────────────────────────── */}

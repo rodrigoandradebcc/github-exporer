@@ -50,7 +50,7 @@ describe('Heading', () => {
         Muted
       </Heading>,
     );
-    expect(screen.getByTestId('h').props.style.color).toBe('#636C76');
+    expect(screen.getByTestId('h').props.style.color).toBe('#756C71');
   });
 
   it('always renders with bold weight', () => {

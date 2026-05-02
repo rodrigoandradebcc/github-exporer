@@ -1,7 +1,8 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useRef } from 'react';
 import { Animated, Pressable } from 'react-native';
 
-import { Avatar, Badge, Box, Card, Heading, Text } from '@/design-system';
+import { Avatar, Badge, Box, Card, Heading, Text, useTheme } from '@/design-system';
 import type { Repository } from '@/services/api/types';
 
 interface RepositoryCardProps {
@@ -11,11 +12,12 @@ interface RepositoryCardProps {
 }
 
 function formatStars(count: number): string {
-  if (count >= 1000) return `${(count / 1000).toFixed(1)}k ★`;
-  return `${count} ★`;
+  if (count >= 1000) return `${(count / 1000).toFixed(1)}k`;
+  return `${count}`;
 }
 
 export function RepositoryCard({ repo, onPress, testID }: RepositoryCardProps) {
+  const { colors } = useTheme();
   const scale = useRef(new Animated.Value(1)).current;
 
   const handlePressIn = () =>
@@ -46,33 +48,42 @@ export function RepositoryCard({ repo, onPress, testID }: RepositoryCardProps) {
       testID={testID}
     >
       <Animated.View style={{ transform: [{ scale }] }}>
-        <Card padding="md">
+        <Card padding="lg">
           <Box direction="column" gap="xs">
-            <Box direction="row" align="center" gap="xs">
-              <Avatar uri={repo.owner.avatar_url} fallback={repo.owner.login} size="sm" />
-              <Text variant="label" size="xs" tone="muted">
-                {repo.owner.login}
-              </Text>
+            {/* Top row: avatar + owner on left, star count on right */}
+            <Box direction="row" align="center" justify="space-between">
+              <Box direction="row" align="center" gap="xs">
+                <Avatar uri={repo.owner.avatar_url} fallback={repo.owner.login} size="sm" />
+                <Text variant="label" size="xs" tone="muted">
+                  {repo.owner.login}
+                </Text>
+              </Box>
+              <Box direction="row" align="center" gap="xs">
+                <Ionicons name="star" size={14} color={colors.warning} />
+                <Text size="sm" weight="medium">
+                  {formatStars(repo.stargazers_count)}
+                </Text>
+              </Box>
             </Box>
 
+            {/* Repo name as hero */}
             <Heading level={3}>{repo.name}</Heading>
 
+            {/* Description */}
             {repo.description !== null && (
-              <Text tone="muted" numberOfLines={2}>
+              <Text tone="muted" size="sm" numberOfLines={2}>
                 {repo.description}
               </Text>
             )}
 
-            <Box direction="row" align="center" gap="sm" paddingTop="xs">
-              {repo.language !== null && (
+            {/* Language badge */}
+            {repo.language !== null && (
+              <Box direction="row">
                 <Badge tone="info" size="sm">
                   {repo.language}
                 </Badge>
-              )}
-              <Text size="xs" tone="muted">
-                {formatStars(repo.stargazers_count)}
-              </Text>
-            </Box>
+              </Box>
+            )}
           </Box>
         </Card>
       </Animated.View>

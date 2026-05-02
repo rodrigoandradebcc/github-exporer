@@ -50,17 +50,17 @@ function IssueCard({ issue }: { issue: Issue }) {
   return (
     <Card testID={`issue-card-${issue.id}`}>
       <Box direction="column" gap="sm">
+        {/* Title with status dot */}
         <Box direction="row" align="flex-start" gap="xs">
           <Ionicons name="ellipse" size={10} color={colors.success} style={{ marginTop: 4 }} />
           <Box flex={1}>
             <Text weight="medium" numberOfLines={2}>
               {issue.title}
             </Text>
-            <Text size="xs" tone="muted">
-              #{issue.number}
-            </Text>
           </Box>
         </Box>
+
+        {/* Labels */}
         {issue.labels.length > 0 && (
           <Box direction="row" gap="xs" wrap>
             {issue.labels.map((label) => (
@@ -70,11 +70,18 @@ function IssueCard({ issue }: { issue: Issue }) {
             ))}
           </Box>
         )}
-        <Box direction="row" align="center" gap="xs">
-          <Avatar uri={issue.user.avatar_url} fallback={issue.user.login} size="sm" />
-          <Text size="xs" tone="muted">
-            {issue.user.login} ·{' '}
-            {formatDistanceToNow(new Date(issue.created_at), { addSuffix: true, locale: ptBR })}
+
+        {/* Footer: author/date on left, issue number on right */}
+        <Box direction="row" align="center" justify="space-between">
+          <Box direction="row" align="center" gap="xs" flex={1}>
+            <Avatar uri={issue.user.avatar_url} fallback={issue.user.login} size="sm" />
+            <Text size="xs" tone="muted" numberOfLines={1}>
+              {issue.user.login} ·{' '}
+              {formatDistanceToNow(new Date(issue.created_at), { addSuffix: true, locale: ptBR })}
+            </Text>
+          </Box>
+          <Text size="xs" tone="muted" weight="medium">
+            #{issue.number}
           </Text>
         </Box>
       </Box>

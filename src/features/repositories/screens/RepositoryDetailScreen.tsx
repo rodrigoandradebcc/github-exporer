@@ -1,15 +1,50 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import React from 'react';
-import { ScrollView } from 'react-native';
+import { ScrollView, View } from 'react-native';
 
-import { Avatar, Badge, Box, Button, Card, Heading, Skeleton, Text, useTheme } from '@/design-system';
+import { Avatar, Box, Button, Card, Heading, Skeleton, Text, useTheme } from '@/design-system';
 import { useRepository } from '@/features/repositories/hooks/useRepository';
 import { ApiError } from '@/services/api/client';
 
 function formatCount(n: number): string {
   if (n >= 1000) return `${(n / 1000).toFixed(1)}k`;
   return String(n);
+}
+
+function StatItem({
+  icon,
+  value,
+  label,
+  iconColor,
+}: {
+  icon: string;
+  value: string;
+  label: string;
+  iconColor: string;
+}) {
+  const { spacing } = useTheme();
+  return (
+    <View
+      style={{
+        width: '50%',
+        alignItems: 'center',
+        paddingVertical: spacing.sm,
+      }}
+    >
+      <Ionicons
+        name={icon as React.ComponentProps<typeof Ionicons>['name']}
+        size={20}
+        color={iconColor}
+      />
+      <Text weight="bold" size="lg">
+        {value}
+      </Text>
+      <Text size="xs" tone="muted">
+        {label}
+      </Text>
+    </View>
+  );
 }
 
 function DetailSkeleton() {
@@ -54,7 +89,14 @@ export function RepositoryDetailScreen() {
   if (isLoading) {
     return (
       <>
-        <Stack.Screen options={{ title: repo }} />
+        <Stack.Screen
+          options={{
+            title: repo,
+            headerStyle: { backgroundColor: colors.background },
+            headerTintColor: colors.text,
+            headerBackTitle: '',
+          }}
+        />
         <DetailSkeleton />
       </>
     );
@@ -63,7 +105,14 @@ export function RepositoryDetailScreen() {
   if (isError) {
     return (
       <>
-        <Stack.Screen options={{ title: repo }} />
+        <Stack.Screen
+          options={{
+            title: repo,
+            headerStyle: { backgroundColor: colors.background },
+            headerTintColor: colors.text,
+            headerBackTitle: '',
+          }}
+        />
         <Box flex={1} align="center" justify="center" padding="xl" testID="detail-error">
           {isRateLimit ? (
             <Box direction="column" align="center" gap="sm">
@@ -118,17 +167,39 @@ export function RepositoryDetailScreen() {
           </Card>
 
           <Card testID="repo-detail-stats">
-            <Box direction="row" gap="sm" align="center" wrap>
-              {data.language !== null && <Badge tone="info">{data.language}</Badge>}
-              <Badge tone="warning">★ {formatCount(data.stargazers_count)}</Badge>
-              <Badge>Forks {formatCount(data.forks_count)}</Badge>
-              <Badge>Watchers {formatCount(data.watchers_count)}</Badge>
-            </Box>
+            <View style={{ flexDirection: 'row', flexWrap: 'wrap' }}>
+              <StatItem
+                icon="star-outline"
+                value={formatCount(data.stargazers_count)}
+                label="Stars"
+                iconColor={colors.warning}
+              />
+              <StatItem
+                icon="git-branch-outline"
+                value={formatCount(data.forks_count)}
+                label="Forks"
+                iconColor={colors.success}
+              />
+              <StatItem
+                icon="eye-outline"
+                value={formatCount(data.watchers_count)}
+                label="Watchers"
+                iconColor={colors.info}
+              />
+              {data.language !== null && (
+                <StatItem
+                  icon="code-slash-outline"
+                  value={data.language}
+                  label="Linguagem"
+                  iconColor={colors.primary}
+                />
+              )}
+            </View>
           </Card>
 
           <Button
             testID="view-issues-button"
-            leftIcon={<Ionicons name="bug-outline" size={16} color="#FFFFFF" />}
+            size="lg"
             onPress={() => router.push(`/repository/${owner}/${repo}/issues`)}
           >
             Ver Issues
