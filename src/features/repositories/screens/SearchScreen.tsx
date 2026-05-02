@@ -1,9 +1,10 @@
 import { Ionicons } from '@expo/vector-icons';
 import { Stack, useRouter } from 'expo-router';
 import React, { useCallback, useState } from 'react';
-import { ActivityIndicator, FlatList, Platform } from 'react-native';
+import { ActivityIndicator, FlatList, Platform, View } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { Box, Button, Input, Text, useTheme } from '@/design-system';
+import { Box, Button, Heading, Input, Text, useTheme } from '@/design-system';
 import { useSearchRepositories } from '@/features/repositories/hooks/useSearchRepositories';
 import { useDebounce } from '@/hooks/useDebounce';
 import { ApiError } from '@/services/api/client';
@@ -112,6 +113,7 @@ function GenericError({ onRetry }: { onRetry: () => void }) {
 export function SearchScreen() {
   const router = useRouter();
   const { spacing, colors, mode, toggleMode } = useTheme();
+  const insets = useSafeAreaInsets();
   const [inputValue, setInputValue] = useState('');
   const debouncedQuery = useDebounce(inputValue, 500);
 
@@ -188,27 +190,19 @@ export function SearchScreen() {
   };
 
   return (
-    <Box flex={1}>
-      <Stack.Screen
-        options={{
-          title: 'GitHub Explorer',
-          headerRight: () => (
-            <Box direction="row" paddingRight="xs">
-              <Button variant="ghost" size="sm" onPress={toggleMode}>
-                <Ionicons
-                  name={mode === 'light' ? 'moon-outline' : 'sunny-outline'}
-                  size={20}
-                  color={colors.text}
-                />
-              </Button>
-              <Button variant="ghost" size="sm" onPress={() => router.push('/showcase')}>
-                <Ionicons name="color-palette-outline" size={20} color={colors.text} />
-              </Button>
-            </Box>
-          ),
-        }}
-      />
+    <View style={{ flex: 1, backgroundColor: colors.background }}>
+      <Stack.Screen options={{ headerShown: false }} />
+
+      {/* Status bar safe area */}
+      <View style={{ height: insets.top }} />
+
+      {/* App title */}
       <Box paddingHorizontal="md" paddingTop="sm" paddingBottom="xs">
+        <Heading level={2}>GitHub Explorer</Heading>
+      </Box>
+
+      {/* Search input */}
+      <Box paddingHorizontal="md" paddingBottom="xs">
         <Input
           placeholder="Buscar repositórios no GitHub…"
           value={inputValue}
@@ -220,7 +214,36 @@ export function SearchScreen() {
           testID="search-input"
         />
       </Box>
-      {renderContent()}
-    </Box>
+
+      {/* Content area */}
+      <View style={{ flex: 1 }}>{renderContent()}</View>
+
+      {/* Bottom navigation bar */}
+      <View
+        style={{
+          flexDirection: 'row',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+          paddingHorizontal: spacing.md,
+          paddingTop: spacing.xs,
+          paddingBottom: Math.max(insets.bottom, spacing.sm),
+          borderTopWidth: 1,
+          borderTopColor: colors.border,
+          backgroundColor: colors.surface,
+          gap: spacing.xs,
+        }}
+      >
+        <Button variant="ghost" size="sm" onPress={toggleMode}>
+          <Ionicons
+            name={mode === 'light' ? 'moon-outline' : 'sunny-outline'}
+            size={22}
+            color={colors.text}
+          />
+        </Button>
+        <Button variant="ghost" size="sm" onPress={() => router.push('/showcase')}>
+          <Ionicons name="color-palette-outline" size={22} color={colors.text} />
+        </Button>
+      </View>
+    </View>
   );
 }
