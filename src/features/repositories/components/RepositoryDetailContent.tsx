@@ -84,7 +84,7 @@ export function RepositoryDetailContent({
         </Animated.View>
 
         <Animated.View entering={reducedMotion ? undefined : FadeInDown.delay(200).duration(300)}>
-          <Button testID="view-issues-button" size="lg" onPress={onViewIssues}>
+          <Button testID="view-issues-button" size="md" onPress={onViewIssues}>
             Ver Issues
           </Button>
         </Animated.View>

@@ -34,7 +34,6 @@ function Section({ title, children }: { title: string; children: React.ReactNode
     <Box direction="column" gap="md">
       <Box direction="column" gap="xs">
         <Heading level={2}>{title}</Heading>
-        {/* Divider — inline style required: no DS component maps to a 1px separator */}
         <View style={{ height: 1, backgroundColor: colors.border }} />
       </Box>
       {children}
@@ -49,6 +48,20 @@ function Label({ children }: { children: string }) {
     </Text>
   );
 }
+
+const toneLabels: Record<BadgeTone, string> = {
+  default: 'PADRÃO',
+  success: 'SUCESSO',
+  warning: 'AVISO',
+  danger: 'PERIGO',
+  info: 'INFO',
+};
+
+const variantLabels: Record<ButtonVariant, string> = {
+  primary: 'PRIMÁRIO',
+  outline: 'CONTORNO',
+  ghost: 'FANTASMA',
+};
 
 // ── Screen ────────────────────────────────────────────────────────────────────
 
@@ -68,14 +81,14 @@ export default function ShowcaseScreen() {
       />
       <ScrollView>
         <Box padding="md" direction="column" gap="xl" paddingBottom="xl">
-          {/* ── 1. Theme ─────────────────────────────────────────────── */}
-          <Section title="Theme">
+          {/* ── 1. Tema ──────────────────────────────────────────────── */}
+          <Section title="Tema">
             <Card>
               <Box direction="row" align="center" justify="space-between">
                 <Box direction="column" gap="xs">
-                  <Text weight="medium">Color mode</Text>
+                  <Text weight="medium">Modo de cor</Text>
                   <Text tone="muted" size="sm">
-                    {mode === 'light' ? 'Light' : 'Dark'}
+                    {mode === 'light' ? 'Claro' : 'Escuro'}
                   </Text>
                 </Box>
                 <Switch value={mode === 'dark'} onValueChange={toggleMode} />
@@ -83,12 +96,12 @@ export default function ShowcaseScreen() {
             </Card>
           </Section>
 
-          {/* ── 2. Colors ────────────────────────────────────────────── */}
-          <Section title="Colors">
+          {/* ── 2. Cores ─────────────────────────────────────────────── */}
+          <Section title="Cores">
             <Box direction="column" gap="sm">
               {(Object.entries(colors) as [ColorKey, string][]).map(([key, value]) => (
                 <Box key={key} direction="row" align="center" gap="md">
-                  {/* Swatch — inline backgroundColor required to show the actual token value */}
+                  {/* Amostra — backgroundColor inline necessário para exibir o valor real do token */}
                   <View
                     style={{
                       width: 48,
@@ -110,12 +123,12 @@ export default function ShowcaseScreen() {
             </Box>
           </Section>
 
-          {/* ── 3. Spacing ───────────────────────────────────────────── */}
-          <Section title="Spacing">
+          {/* ── 3. Espaçamento ───────────────────────────────────────── */}
+          <Section title="Espaçamento">
             <Box direction="column" gap="sm">
               {(Object.entries(spacing) as [SpacingKey, number][]).map(([key, value]) => (
                 <Box key={key} direction="row" align="center" gap="md">
-                  {/* Bar width proportional to token — inline style required */}
+                  {/* Largura da barra proporcional ao token — estilo inline necessário */}
                   <View
                     style={{
                       width: value * 5,
@@ -133,55 +146,55 @@ export default function ShowcaseScreen() {
             </Box>
           </Section>
 
-          {/* ── 4. Typography ────────────────────────────────────────── */}
-          <Section title="Typography">
+          {/* ── 4. Tipografia ────────────────────────────────────────── */}
+          <Section title="Tipografia">
             <Box direction="column" gap="lg">
               <Box direction="column" gap="xs">
-                <Label>HEADINGS</Label>
-                <Heading level={1}>Heading 1 — xl</Heading>
-                <Heading level={2}>Heading 2 — lg</Heading>
-                <Heading level={3}>Heading 3 — md</Heading>
+                <Label>TÍTULOS</Label>
+                <Heading level={1}>Título 1 — xl</Heading>
+                <Heading level={2}>Título 2 — lg</Heading>
+                <Heading level={3}>Título 3 — md</Heading>
               </Box>
 
               <Box direction="column" gap="xs">
-                <Label>TEXT SIZES</Label>
+                <Label>TAMANHOS</Label>
                 <Text size="xl">xl — 28px</Text>
                 <Text size="lg">lg — 20px</Text>
-                <Text size="md">md — 16px (default)</Text>
+                <Text size="md">md — 16px (padrão)</Text>
                 <Text size="sm">sm — 14px</Text>
                 <Text size="xs">xs — 12px</Text>
               </Box>
 
               <Box direction="column" gap="xs">
-                <Label>VARIANTS</Label>
-                <Text variant="body">Body — default prose text</Text>
-                <Text variant="caption">Caption — secondary information</Text>
-                <Text variant="label">Label — uppercase metadata</Text>
+                <Label>VARIANTES</Label>
+                <Text variant="body">Corpo — texto corrido padrão</Text>
+                <Text variant="caption">Legenda — informação secundária</Text>
+                <Text variant="label">Rótulo — metadado em maiúsculas</Text>
               </Box>
 
               <Box direction="column" gap="xs">
-                <Label>WEIGHTS</Label>
+                <Label>PESOS</Label>
                 <Text weight="regular">Regular 400</Text>
-                <Text weight="medium">Medium 500</Text>
-                <Text weight="bold">Bold 700</Text>
+                <Text weight="medium">Médio 500</Text>
+                <Text weight="bold">Negrito 700</Text>
               </Box>
 
               <Box direction="column" gap="xs">
-                <Label>TONES</Label>
-                <Text tone="default">Default — primary content</Text>
-                <Text tone="muted">Muted — secondary content</Text>
-                <Text tone="danger">Danger — errors and warnings</Text>
-                <Text tone="success">Success — positive feedback</Text>
+                <Label>TONS</Label>
+                <Text tone="default">Padrão — conteúdo principal</Text>
+                <Text tone="muted">Atenuado — conteúdo secundário</Text>
+                <Text tone="danger">Perigo — erros e alertas</Text>
+                <Text tone="success">Sucesso — retorno positivo</Text>
               </Box>
             </Box>
           </Section>
 
-          {/* ── 5. Buttons ───────────────────────────────────────────── */}
-          <Section title="Buttons">
+          {/* ── 5. Botões ────────────────────────────────────────────── */}
+          <Section title="Botões">
             <Box direction="column" gap="md">
               {(['primary', 'outline', 'ghost'] as ButtonVariant[]).map((variant) => (
                 <Box key={variant} direction="column" gap="xs">
-                  <Label>{variant.toUpperCase()}</Label>
+                  <Label>{variantLabels[variant]}</Label>
                   <Box direction="row" align="center" gap="sm">
                     {(['sm', 'md', 'lg'] as ButtonSize[]).map((size) => (
                       <Button key={size} variant={variant} size={size} onPress={() => {}}>
@@ -193,38 +206,43 @@ export default function ShowcaseScreen() {
               ))}
 
               <Box direction="column" gap="xs">
-                <Label>STATES</Label>
+                <Label>ESTADOS</Label>
                 <Box direction="row" align="center" gap="sm">
                   <Button loading onPress={() => {}}>
-                    Loading
+                    Carregando
                   </Button>
                   <Button disabled onPress={() => {}}>
-                    Disabled
+                    Desabilitado
                   </Button>
                 </Box>
               </Box>
             </Box>
           </Section>
 
-          {/* ── 6. Inputs ────────────────────────────────────────────── */}
-          <Section title="Inputs">
+          {/* ── 6. Campos ────────────────────────────────────────────── */}
+          <Section title="Campos">
             <Box direction="column" gap="md">
-              <Input label="Empty" value="" onChangeText={() => {}} placeholder="Placeholder…" />
-              <Input label="With value" value="facebook/react" onChangeText={() => {}} />
+              <Input label="Vazio" value="" onChangeText={() => {}} placeholder="Placeholder…" />
+              <Input label="Com valor" value="facebook/react" onChangeText={() => {}} />
               <Input
-                label="Error state"
-                value="invalid@name"
+                label="Estado de erro"
+                value="nome@inválido"
                 onChangeText={() => {}}
-                error="Repository name cannot contain @"
+                error="Nome do repositório não pode conter @"
               />
               <Input
-                label="Helper text (interactive)"
+                label="Texto auxiliar (interativo)"
                 value={controlled}
                 onChangeText={setControlled}
-                placeholder="e.g. torvalds"
-                helperText="Enter a GitHub username or organisation"
+                placeholder="ex.: torvalds"
+                helperText="Digite um usuário ou organização do GitHub"
               />
-              <Input label="Disabled" value="read-only value" onChangeText={() => {}} disabled />
+              <Input
+                label="Desabilitado"
+                value="valor somente leitura"
+                onChangeText={() => {}}
+                disabled
+              />
             </Box>
           </Section>
 
@@ -249,11 +267,11 @@ export default function ShowcaseScreen() {
             <Box direction="column" gap="sm">
               {(['default', 'success', 'warning', 'danger', 'info'] as BadgeTone[]).map((tone) => (
                 <Box key={tone} direction="column" gap="xs">
-                  <Label>{tone.toUpperCase()}</Label>
+                  <Label>{toneLabels[tone]}</Label>
                   <Box direction="row" align="center" gap="sm">
                     {(['sm', 'md'] as BadgeSize[]).map((size) => (
                       <Badge key={size} tone={tone} size={size}>
-                        {tone} · {size}
+                        {toneLabels[tone].toLowerCase()} · {size}
                       </Badge>
                     ))}
                   </Box>
@@ -262,11 +280,11 @@ export default function ShowcaseScreen() {
             </Box>
           </Section>
 
-          {/* ── 9. Avatars ───────────────────────────────────────────── */}
-          <Section title="Avatars">
+          {/* ── 9. Avatares ──────────────────────────────────────────── */}
+          <Section title="Avatares">
             <Box direction="column" gap="md">
               <Box direction="column" gap="xs">
-                <Label>WITH URI — sm / md / lg</Label>
+                <Label>COM URI — p / m / g</Label>
                 <Box direction="row" align="center" gap="md">
                   {(['sm', 'md', 'lg'] as AvatarSize[]).map((size) => (
                     <Avatar
@@ -279,7 +297,7 @@ export default function ShowcaseScreen() {
                 </Box>
               </Box>
               <Box direction="column" gap="xs">
-                <Label>FALLBACK ONLY — sm / md / lg</Label>
+                <Label>APENAS FALLBACK — p / m / g</Label>
                 <Box direction="row" align="center" gap="md">
                   {(['sm', 'md', 'lg'] as AvatarSize[]).map((size) => (
                     <Avatar key={size} fallback="Rodrigo" size={size} />
